@@ -28,11 +28,8 @@
       </v-row>
     </v-container>
     <v-card-actions>
-      <v-btn v-if="canHit" :click="completeAction('Hit')">
-        Hit
-      </v-btn>
-      <v-btn v-if="canHold" :click="completeAction('Hold')">
-        Hold
+      <v-btn v-for="action in player.actions" :key="action" v-on:click="completeAction(action)">
+        {{ action }}
       </v-btn>
     </v-card-actions>
   </v-card>
@@ -50,20 +47,13 @@ export default Vue.extend({
       required: true,
     },
   },
-  computed: {
-    canHit(): boolean {
-      return this.player.actions.some((action: Actions) => {return action === Actions.Hit})
-    },
-    canHold(): boolean {
-      return this.player.actions.some((action: Actions) => {return action === Actions.Hold})
-    }
-  },
-  data: () => ({}),
+  computed: { },
+  data: () => ({ }),
   methods: {
     cardMarginTop: (order: number): number => {
       return order * 25;
     },
-    completeAction(action: string): void {
+    completeAction(action: Actions): void {
       this.$emit("action", action);
     }
   },

@@ -18,7 +18,8 @@
       </v-row>
       <v-row dense justify="center">
         <v-col cols="4" v-for="player in players" :key="player.name">
-          <Player :player="player" :turn="turn"> </Player>
+          <Player :player="player" :turn="turn" v-on:action="playerAction">
+          </Player>
         </v-col>
       </v-row>
     </v-container>
@@ -30,7 +31,17 @@ import Vue from "vue";
 import Player from "@/components/Player.vue";
 import { IPlayer, Actions, GameStatus } from "@/model/";
 
+interface ICardImage {
+  image: NodeRequire;
+}
+
 export class PlayersTestData {
+  public cardsPushList: ICardImage[] = [
+    { image: require("../assets/cards/2_of_spades.png") },
+    { image: require("../assets/cards/ace_of_spades.png") },
+    { image: require("../assets/cards/4_of_spades.png") },
+    { image: require("../assets/cards/5_of_spades.png") },
+  ];
   public twoPlayerAfterDeal: IPlayer[] = [
     {
       visibleCards: [
@@ -83,18 +94,36 @@ export default Vue.extend({
   data: (): IData => ({
     turn: 1,
     players: [],
-    gameStatus: GameStatus.Waiting
+    gameStatus: GameStatus.Waiting,
   }),
   computed: {
     gameWaiting(): boolean {
       return this.gameStatus === GameStatus.Waiting;
-    }
+    },
   },
   methods: {
     beginGame() {
       this.players = new PlayersTestData().twoPlayerAfterDeal;
       this.gameStatus = GameStatus.InProgress;
-    }
-  }
+    },
+    playerAction(action: Actions): void {
+      const image = new PlayersTestData().cardsPushList.slice()[0].image;
+      const cardCount = this.players[1].visibleCards.length;
+
+      switch (action) {
+        case Actions.Hit:
+          this.players[1].visibleCards.push({ order: cardCount, image: image });
+          break;
+        case Actions.Hold:
+          this.players[1].actions = this.players[1].actions.filter(action => {
+            return action !== Actions.Hit &&
+            action !== Actions.Hold
+          })
+          break;
+        default:
+          throw new Error("Action Type Not found.");
+      }
+    },
+  },
 });
 </script>
