@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="2" class="rounded-lg" outlined shaped tile max-width="500">
+  <v-card elevation="2" class="rounded-lg" outlined shaped tile max-width="450">
     <v-card-text>
       <p class="display-1 text--primary">{{ player.name }}</p>
     </v-card-text>
@@ -28,10 +28,10 @@
       </v-row>
     </v-container>
     <v-card-actions>
-      <v-btn v-if="canHit" v-on:click="completeAction('Hit')">
+      <v-btn v-if="canHit" :click="completeAction('Hit')">
         Hit
       </v-btn>
-      <v-btn v-if="canHold" v-on:click="completeAction('Hold')">
+      <v-btn v-if="canHold" :click="completeAction('Hold')">
         Hold
       </v-btn>
     </v-card-actions>
