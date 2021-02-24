@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from "vue";
 import Player from "@/components/Player.vue";
-import { IPlayer, Actions, GameStatus } from "@/model/";
+import { IPlayer, Actions, GameStatus, ICard } from "@/model/";
 
 interface ICardImage {
   image: NodeRequire;
@@ -49,6 +49,7 @@ export class PlayersTestData {
       ],
       name: "Dealer",
       actions: [],
+      cardCount: 2
     },
     {
       visibleCards: [
@@ -56,6 +57,7 @@ export class PlayersTestData {
       ],
       name: "Player One",
       actions: [Actions.Hit, Actions.Hold],
+      cardCount: 2
     },
   ];
 
@@ -66,6 +68,7 @@ export class PlayersTestData {
       ],
       name: "Dealer",
       actions: [],
+      cardCount: 2
     },
     {
       visibleCards: [
@@ -76,6 +79,7 @@ export class PlayersTestData {
       ],
       name: "Player One",
       actions: [Actions.Hit, Actions.Hold],
+      cardCount: 5
     },
   ];
 }
@@ -84,6 +88,7 @@ interface IData {
   turn: number;
   players: IPlayer[];
   gameStatus: GameStatus;
+  cardBack: NodeRequire;
 }
 
 export default Vue.extend({
@@ -95,6 +100,7 @@ export default Vue.extend({
     turn: 1,
     players: [],
     gameStatus: GameStatus.Waiting,
+    cardBack: require('../assets/cards/card_back_blue.jpg')
   }),
   computed: {
     gameWaiting(): boolean {
@@ -102,8 +108,19 @@ export default Vue.extend({
     },
   },
   methods: {
+    addHiddenCard(cards: ICard[]) {
+      const cardBack: ICard = { 
+        order: 0,
+        image: require('../assets/cards/card_back_blue.jpg')
+      }
+      cards.forEach(card => card.order++);
+      cards.unshift(cardBack);
+    },
     beginGame() {
       this.players = new PlayersTestData().twoPlayerAfterDeal;
+      this.players.forEach(player => {{
+        this.addHiddenCard(player.visibleCards);
+      }})
       this.gameStatus = GameStatus.InProgress;
     },
     playerAction(action: Actions): void {
@@ -112,6 +129,7 @@ export default Vue.extend({
 
       switch (action) {
         case Actions.Hit:
+          this.players[1].cardCount++;
           this.players[1].visibleCards.push({ order: cardCount, image: image });
           break;
         case Actions.Hold:

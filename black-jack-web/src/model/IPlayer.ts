@@ -4,4 +4,5 @@ export interface IPlayer {
     name: string;
     visibleCards: ICard[];
     actions: Actions[];
+    cardCount: number;
   }
