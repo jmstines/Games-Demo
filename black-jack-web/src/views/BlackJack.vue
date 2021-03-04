@@ -29,66 +29,16 @@
 <script lang="ts">
 import Vue from "vue";
 import Player from "@/components/Player.vue";
-import { IPlayer, Actions, GameStatus, ICard } from "@/model/";
+import { IPlayer, Actions, GameStatus } from "@/model/";
 
-interface ICardImage {
-  image: NodeRequire;
-}
+// TODO: Remove after function wire up
+import { PlayersTestData } from "@/model/FakeData.ts";
 
-export class PlayersTestData {
-  public cardsPushList: ICardImage[] = [
-    { image: require("../assets/cards/2_of_spades.png") },
-    { image: require("../assets/cards/ace_of_spades.png") },
-    { image: require("../assets/cards/4_of_spades.png") },
-    { image: require("../assets/cards/5_of_spades.png") },
-  ];
-  public twoPlayerAfterDeal: IPlayer[] = [
-    {
-      visibleCards: [
-        { order: 0, image: require("../assets/cards/3_of_spades.png") },
-      ],
-      name: "Dealer",
-      actions: [],
-      cardCount: 2
-    },
-    {
-      visibleCards: [
-        { order: 0, image: require("../assets/cards/2_of_spades.png") },
-      ],
-      name: "Player One",
-      actions: [Actions.Hit, Actions.Hold],
-      cardCount: 2
-    },
-  ];
-
-  public twoPlayerMaxCards: IPlayer[] = [
-    {
-      visibleCards: [
-        { order: 0, image: require("../assets/cards/3_of_spades.png") },
-      ],
-      name: "Dealer",
-      actions: [],
-      cardCount: 2
-    },
-    {
-      visibleCards: [
-        { order: 0, image: require("../assets/cards/2_of_spades.png") },
-        { order: 1, image: require("../assets/cards/ace_of_spades.png") },
-        { order: 2, image: require("../assets/cards/4_of_spades.png") },
-        { order: 3, image: require("../assets/cards/5_of_spades.png") },
-      ],
-      name: "Player One",
-      actions: [Actions.Hit, Actions.Hold],
-      cardCount: 5
-    },
-  ];
-}
-
+// TODO: Implement SSE for push event back to client
 interface IData {
   turn: number;
   players: IPlayer[];
   gameStatus: GameStatus;
-  cardBack: NodeRequire;
 }
 
 export default Vue.extend({
@@ -100,7 +50,6 @@ export default Vue.extend({
     turn: 1,
     players: [],
     gameStatus: GameStatus.Waiting,
-    cardBack: require('../assets/cards/card_back_blue.jpg')
   }),
   computed: {
     gameWaiting(): boolean {
@@ -108,35 +57,32 @@ export default Vue.extend({
     },
   },
   methods: {
-    addHiddenCard(cards: ICard[]) {
-      const cardBack: ICard = { 
-        order: 0,
-        image: require('../assets/cards/card_back_blue.jpg')
-      }
-      cards.forEach(card => card.order++);
-      cards.unshift(cardBack);
-    },
     beginGame() {
       this.players = new PlayersTestData().twoPlayerAfterDeal;
-      this.players.forEach(player => {{
-        this.addHiddenCard(player.visibleCards);
-      }})
+
       this.gameStatus = GameStatus.InProgress;
     },
     playerAction(action: Actions): void {
       const image = new PlayersTestData().cardsPushList.slice()[0].image;
-      const cardCount = this.players[1].visibleCards.length;
+      const cardCount = this.players[1].hands[0].cards.length;
 
       switch (action) {
         case Actions.Hit:
-          this.players[1].cardCount++;
-          this.players[1].visibleCards.push({ order: cardCount, image: image });
-          break;
-        case Actions.Hold:
-          this.players[1].actions = this.players[1].actions.filter(action => {
+          this.players[1].hands[0].cards.push({ order: cardCount, image: image });
+          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(action => {
             return action !== Actions.Hit &&
             action !== Actions.Hold
           })
+          break;
+        case Actions.Hold:
+          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(action => {
+            return action !== Actions.Hit &&
+            action !== Actions.Hold && action !== Actions.Split
+          })
+          break;
+        case Actions.Split:
+          this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]]
+          this.players[1].hands.push(this.players[1].hands[0])
           break;
         default:
           throw new Error("Action Type Not found.");
