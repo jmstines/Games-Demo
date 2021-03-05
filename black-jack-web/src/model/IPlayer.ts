@@ -1,6 +1,6 @@
-import { Actions, ICard, IHand } from "@/model/";
+import { IHand } from "@/model/";
 
 export interface IPlayer {
-    name: string;
-    hands: IHand[];
-  }
+  name: string;
+  hands: IHand[];
+}

@@ -16,30 +16,30 @@
       </v-card-actions>
     </v-container>
   </v-card>
-</template> 
+</template>
 
 <script lang="ts">
-import { Actions } from "@/model";
+import { Actions } from "@/model/";
 import Vue from "vue";
 import Hand from "@/components/Hand.vue";
 
 export default Vue.extend({
   name: "Player",
   components: {
-    Hand: Hand,
+    Hand: Hand
   },
   props: {
     player: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {},
   data: () => ({}),
   methods: {
     completeAction(action: Actions): void {
       this.$emit("action", action);
-    },
-  },
+    }
+  }
 });
 </script>

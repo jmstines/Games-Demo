@@ -1,45 +1,58 @@
-import { Actions, IPlayer } from "@/model"
+import { Actions, IPlayer } from "@/model";
 
-export class playersTestData {
-    public twoPlayerAfterDeal: IPlayer[] = [
+export class PlayersTestData {
+  public twoPlayerAfterDeal: IPlayer[] = [
+    {
+      name: "Dealer",
+      hands: [
         {
-
-            visibleCards: [
-                { order: 0, image: require("../assets/cards/3_of_spades.png") },
-            ],
-            name: "Dealer",
-            actions: [],
-        },
-        {
-            visibleCards: [
-                { order: 0, image: require("../assets/cards/2_of_spades.png") },
-                { order: 1, image: require("../assets/cards/ace_of_spades.png") },
-                { order: 2, image: require("../assets/cards/4_of_spades.png") },
-                { order: 3, image: require("../assets/cards/5_of_spades.png") }
-            ],
-            name: "Player One",
-            actions: [Actions.Hit, Actions.Hold],
+          cards: [
+            { order: 0, image: require("../assets/cards/card_back_blue.jpg") },
+            { order: 1, image: require("../assets/cards/3_of_spades.png") }
+          ],
+          actions: []
         }
-    ]
-
-    public twoPlayerMaxCards: IPlayer[] = [
+      ]
+    },
+    {
+      name: "Player One",
+      hands: [
         {
-
-            visibleCards: [
-                { order: 0, image: require("../assets/cards/3_of_spades.png") },
-            ],
-            name: "Dealer",
-            actions: [],
-        },
-        {
-            visibleCards: [
-                { order: 0, image: require("../assets/cards/2_of_spades.png") },
-                { order: 1, image: require("../assets/cards/ace_of_spades.png") },
-                { order: 2, image: require("../assets/cards/4_of_spades.png") },
-                { order: 3, image: require("../assets/cards/5_of_spades.png") }
-            ],
-            name: "Player One",
-            actions: [Actions.Hit, Actions.Hold],
+          cards: [
+            { order: 0, image: require("../assets/cards/card_back_blue.jpg") },
+            { order: 1, image: require("../assets/cards/ace_of_spades.png") }
+          ],
+          actions: [Actions.Hit, Actions.Hold, Actions.Split]
         }
-    ]
+      ]
+    }
+  ];
+
+  public twoPlayerMaxCards: IPlayer[] = [
+    {
+      name: "Dealer",
+      hands: [
+        {
+          cards: [
+            { order: 0, image: require("../assets/cards/3_of_spades.png") }
+          ],
+          actions: []
+        }
+      ]
+    },
+    {
+      name: "Player One",
+      hands: [
+        {
+          cards: [
+            { order: 0, image: require("../assets/cards/2_of_spades.png") },
+            { order: 1, image: require("../assets/cards/ace_of_spades.png") },
+            { order: 2, image: require("../assets/cards/4_of_spades.png") },
+            { order: 3, image: require("../assets/cards/5_of_spades.png") }
+          ],
+          actions: [Actions.Hit, Actions.Hold]
+        }
+      ]
+    }
+  ];
 }

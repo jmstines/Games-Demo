@@ -32,7 +32,7 @@ import Player from "@/components/Player.vue";
 import { IPlayer, Actions, GameStatus } from "@/model/";
 
 // TODO: Remove after function wire up
-import { PlayersTestData } from "@/model/FakeData.ts";
+import { PlayersTestData } from "@/model/FakeData";
 
 // TODO: Implement SSE for push event back to client
 interface IData {
@@ -44,17 +44,17 @@ interface IData {
 export default Vue.extend({
   name: "BlackJack",
   components: {
-    Player,
+    Player
   },
   data: (): IData => ({
     turn: 1,
     players: [],
-    gameStatus: GameStatus.Waiting,
+    gameStatus: GameStatus.Waiting
   }),
   computed: {
     gameWaiting(): boolean {
       return this.gameStatus === GameStatus.Waiting;
-    },
+    }
   },
   methods: {
     beginGame() {
@@ -68,26 +68,35 @@ export default Vue.extend({
 
       switch (action) {
         case Actions.Hit:
-          this.players[1].hands[0].cards.push({ order: cardCount, image: image });
-          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(action => {
-            return action !== Actions.Hit &&
-            action !== Actions.Hold
-          })
+          this.players[1].hands[0].cards.push({
+            order: cardCount,
+            image: image
+          });
+          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
+            action => {
+              return action !== Actions.Split && action !== Actions.Hold;
+            }
+          );
           break;
         case Actions.Hold:
-          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(action => {
-            return action !== Actions.Hit &&
-            action !== Actions.Hold && action !== Actions.Split
-          })
+          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
+            action => {
+              return (
+                action !== Actions.Hit &&
+                action !== Actions.Hold &&
+                action !== Actions.Split
+              );
+            }
+          );
           break;
         case Actions.Split:
-          this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]]
-          this.players[1].hands.push(this.players[1].hands[0])
+          this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]];
+          this.players[1].hands.push(this.players[1].hands[0]);
           break;
         default:
           throw new Error("Action Type Not found.");
       }
-    },
-  },
+    }
+  }
 });
 </script>

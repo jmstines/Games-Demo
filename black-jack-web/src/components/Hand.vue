@@ -19,23 +19,22 @@ export default Vue.extend({
   props: {
     cards: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {},
   data: () => ({}),
   methods: {
     imageStyle: (order: number): string => {
       const pixels = (order - 1) * 30;
-      let style = `left:${pixels}px;`
+      let style = `left:${pixels}px;`;
       if (order !== 0) {
         style = `${style} position:absolute; margin-top:-200px;`;
-      }
-      else {
-        style = `right:${100}px;`
+      } else {
+        style = `right:${100}px;`;
       }
       return style;
-    },
-  },
+    }
+  }
 });
 </script>
