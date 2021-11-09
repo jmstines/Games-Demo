@@ -1,14 +1,11 @@
 <template>
-  <div>
-    <v-img
-      v-for="card in cards"
-      :style="imageStyle(card.order)"
-      :key="card.order"
-      :src="card.image"
-      contain
-      height="200"
-    />
-  </div>
+  <v-container>
+    <v-row align-content="start" no-gutters >
+      <v-col cols="6" :offset=imageOffset(card.order) v-for="card in cards" :key="card.order">
+          <v-img contain :src="card.image" height="200px" />
+        </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -25,6 +22,9 @@ export default Vue.extend({
   computed: {},
   data: () => ({}),
   methods: {
+    imageOffset: (order: number): string => {
+      return order != 0 ? "-4" : "0";
+    },
     imageStyle: (order: number): string => {
       const pixels = (order - 1) * 30;
       let style = `left:${pixels}px;`;
