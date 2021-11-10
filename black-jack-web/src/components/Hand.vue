@@ -1,10 +1,12 @@
 <template>
-  <v-container>
-    <v-row align-content="start" no-gutters >
-      <v-col cols="6" :offset=imageOffset(card.order) v-for="card in cards" :key="card.order">
-          <v-img contain :src="card.image" height="200px" />
-        </v-col>
-    </v-row>
+  <v-container class="wrapper">
+    <v-img
+      v-for="card in cards"
+      :key="card.order"
+      :src="card.image"
+      :class="cardClass(card.order)"
+      :style="zIndex(card.order)"
+    />
   </v-container>
 </template>
 
@@ -16,8 +18,8 @@ export default Vue.extend({
   props: {
     cards: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   computed: {},
   data: () => ({}),
@@ -34,7 +36,41 @@ export default Vue.extend({
         style = `right:${100}px;`;
       }
       return style;
-    }
+    },
+    zIndex(order: number): string {
+      return `z-index: ${order * 10};`;
+    },
+    cardClass(order: number) {
+      return `card${order + 1}`;
+    },
   }
 });
 </script>
+
+<style scoped>
+.wrapper {
+  display: grid;
+  grid-gap: 0px;
+  grid-template-columns: repeat(6, [col] 55px);
+}
+.card1 {
+  grid-column: col 1 / span 2;
+  grid-row: row 1;
+}
+.card2 {
+  grid-column: col 2 / span 2;
+  grid-row: row 1;
+}
+.card3 {
+  grid-column: col 3 / span 2;
+  grid-row: row 1;
+}
+.card4 {
+  grid-column: col 4 / span 2;
+  grid-row: row 1;
+}
+.card5 {
+  grid-column: col 5 / span 2;
+  grid-row: row 1;
+}
+</style>
