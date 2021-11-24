@@ -17,8 +17,14 @@ export class PlayersTestData {
       hands: [
         {
           cards: [
-            { order: 0, image: require("../assets/cards/card_back_blue.jpg") },
-            { order: 1, image: require("../assets/cards/3_of_spades.png") }
+            { 
+              order: 0,
+              image: require("../assets/cards/card_back_blue.jpg")
+            },
+            { 
+              order: 1,
+              image: require("../assets/cards/3_of_spades.png")
+            }
           ],
           actions: []
         }

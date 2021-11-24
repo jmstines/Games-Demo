@@ -3,7 +3,7 @@
     <v-card-text>
       <p class="display-1 text--primary">{{ player.name }}</p>
     </v-card-text>
-    <v-container v-for="hand in player.hands" :key="hand.length">
+    <div v-for="hand in player.hands" :key="hand.length">
       <hand :cards="hand.cards"></hand>
       <v-card-actions>
         <v-btn
@@ -14,7 +14,7 @@
           {{ action }}
         </v-btn>
       </v-card-actions>
-    </v-container>
+    </div>
   </v-card>
 </template>
 
@@ -43,3 +43,6 @@ export default Vue.extend({
   }
 });
 </script>
+
+<style scoped>
+</style>

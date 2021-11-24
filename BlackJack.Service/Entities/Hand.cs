@@ -8,12 +8,12 @@ namespace Entities
 {
 	public class Hand
 	{
-		private readonly List<IBlackJackCard> cards = new List<IBlackJackCard>();
+		private readonly List<BlackJackCard> cards = new List<BlackJackCard>();
 		private List<HandActionTypes> actions;
 
 		public string Identifier { get; private set; }
 		public IEnumerable<HandActionTypes> Actions => actions;
-		public IEnumerable<IBlackJackCard> Cards => cards;
+		public IEnumerable<BlackJackCard> Cards => cards;
 		public int PointValue { get; private set; } = 0;
 		public HandStatusTypes Status { get; private set; } = HandStatusTypes.InProgress;
 
@@ -53,13 +53,13 @@ namespace Entities
 			SetHandActions();
 		}
 
-		public IEnumerable<ICard> Split()
+		public IEnumerable<IBlackJackCard> Split()
 		{
 			if (Actions.Contains(HandActionTypes.Split) == false)
 			{
 				throw new InvalidOperationException("Hand Status is not Eligable for Spliting.");
 			}
-			var splitCards = new List<ICard>();
+			var splitCards = new List<IBlackJackCard>();
 			cards.ForEach(c => splitCards.Add(c));
 			cards.Clear();
 			SetPointValue();

@@ -16,6 +16,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using static Interactors.BeginGameInteractor;
+using static Interactors.JoinGameInteractor;
 
 namespace BlackJackController
 {
@@ -28,7 +30,6 @@ namespace BlackJackController
 
 		public IConfiguration Configuration { get; }
 
-		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddControllers();
@@ -38,13 +39,14 @@ namespace BlackJackController
 			services.AddScoped<IGameIdentifierProvider, GuidBasedGameIdentifierProvider>();
 			services.AddScoped<IDealerProvider, DealerProvider>();
 			services.AddScoped<IRandomProvider, RandomProvider>();
+			services.AddScoped<IHandIdentifierProvider, GuidBasedHandIdentifierProvider>();
 			services.AddScoped<ICardProvider, CardProvider>();
 			services.AddScoped<Deck, Deck>();
 			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
 			services.AddScoped<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
 			
-		 	services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
-			services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
+		 	//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
+			//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

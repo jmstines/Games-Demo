@@ -8,6 +8,7 @@ namespace Entities
 	// TODO - Add Tests for the Mapper Class
 	public static class MapperBlackJackGameDto
 	{
+		private const string CardBackName = "card_back_blue.jpg";
 		public static BlackJackGameDto Map(BlackJackGame game, string playerId)
 		{
 			_ = game ?? throw new ArgumentNullException(nameof(game));
@@ -53,10 +54,7 @@ namespace Entities
 			{
 				var dto = new HandDto
 				{
-					Cards = showAll
-						? hand.Cards
-						: hand.Cards.Where(c => c.FaceDown.Equals(false)),
-
+					Cards = MapCards(hand.Cards, showAll),
 					Identifier = hand.Identifier,
 					Actions = hand.Actions,
 					CardCount = hand.Cards.Count(),
@@ -67,5 +65,37 @@ namespace Entities
 			}
 			return handDtos;
 		}
+
+		private static List<BlackJackCardDto> MapCards(IEnumerable<BlackJackCard> cards, bool showAll)
+		{
+			var cardDtos = new List<BlackJackCardDto>();
+
+			foreach(var card in cards)
+			{
+				var cardDto = MapCard(card, showAll);
+				cardDtos.Add(cardDto);
+			}
+			return cardDtos;
+		}
+
+		private static BlackJackCardDto MapCard(BlackJackCard card, bool showAll)
+		{
+			if (ShouldShowCardBack(card.FaceDown, showAll))
+			{
+				return new BlackJackCardDto()
+				{
+					ImageName = CardBackName,
+				};
+			}
+
+			return new BlackJackCardDto()
+			{
+				ImageName = $"{card.Rank.ToString().ToLower()}_of_{card.Suit.ToString().ToLower()}.png",
+				Value = card.Value
+			};
+		}
+
+		private static bool ShouldShowCardBack(bool faceDown, bool showAll) => 
+			faceDown && showAll == false;
 	}
 }

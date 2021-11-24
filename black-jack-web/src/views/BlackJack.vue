@@ -6,7 +6,7 @@
           <h1 class="d-flex justify-center">
             This is the Black Jack Game page.
           </h1>
-          <h4 class="d-flex justify-center">Turn {{ turn }}</h4>
+          <h3 class="d-flex justify-center">Turn {{ turn }}</h3>
         </v-col>
       </v-row>
       <v-row>
