@@ -53,12 +53,12 @@ namespace BlackJackController.Controllers
 									},
 									new BlackJackCardDto()
 									{
-										Value = 10,
-										ImageName = $"{CardRank.Three}_{CardSuit.Hearts}.png"
+										Value = 3,
+										ImageName = $"{CardRank.Three.ToString().ToLower()}_{CardSuit.Hearts.ToString().ToLower()}.png"
 									}
 								},
 								CardCount = 2,
-								PointValue = 20,
+								PointValue = 3,
 								Status = HandStatusTypes.InProgress
 							}
 						},
@@ -79,23 +79,21 @@ namespace BlackJackController.Controllers
 									HandActionTypes.Draw,
 									HandActionTypes.Pass
 								},
-								//Cards = new List<BlackJackCard>
-								//{
-								//	new BlackJackCard(
-								//		new Card (
-								//			CardSuit.Hearts,
-								//			CardRank.Queen
-								//		),
-								//		true),
-								//	new BlackJackCard(
-								//		new Card (
-								//			CardSuit.Hearts,
-								//			CardRank.Ten
-								//		),
-								//		false)
-								//},
+								Cards = new List<BlackJackCardDto>
+								{
+									new BlackJackCardDto()
+									{
+										Value = 5,
+										ImageName = $"{CardRank.Five.ToString().ToLower()}_{CardSuit.Clubs.ToString().ToLower()}.png"
+									},
+									new BlackJackCardDto()
+									{
+										Value = 5,
+										ImageName = $"{CardRank.Five.ToString().ToLower()}_{CardSuit.Hearts.ToString().ToLower()}.png"
+									}
+								},
 								CardCount = 2,
-								PointValue = 20,
+								PointValue = 10,
 								Status = HandStatusTypes.InProgress
 							}
 						},
