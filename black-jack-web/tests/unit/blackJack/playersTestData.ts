@@ -4,11 +4,20 @@ export class PlayersTestData {
   public twoPlayerAfterDeal: IPlayer[] = [
     {
       name: "Dealer",
+      playerIdentifier: "654987321",
       hands: [
         {
           cards: [
-            { order: 0, image: require("../assets/cards/card_back_blue.jpg") },
-            { order: 1, image: require("../assets/cards/3_of_spades.png") }
+            { 
+              order: 0,
+              imageName: require("../assets/cards/card_back_blue.jpg"),
+              value: null
+            },
+            { 
+              order: 1,
+              imageName: require("../assets/cards/3_of_spades.png"),
+              value: 3
+            }
           ],
           actions: []
         }
@@ -16,11 +25,19 @@ export class PlayersTestData {
     },
     {
       name: "Player One",
+      playerIdentifier: "978756321",
       hands: [
         {
           cards: [
-            { order: 0, image: require("../assets/cards/card_back_blue.jpg") },
-            { order: 1, image: require("../assets/cards/ace_of_spades.png") }
+            { 
+              order: 0, 
+              imageName: require("../assets/cards/card_back_blue.jpg"),
+              value: null
+            },
+            { order: 1,
+              imageName: require("../assets/cards/ace_of_spades.png"),
+              value: 11
+          }
           ],
           actions: [Actions.Hit, Actions.Hold, Actions.Split]
         }
@@ -31,10 +48,15 @@ export class PlayersTestData {
   public twoPlayerMaxCards: IPlayer[] = [
     {
       name: "Dealer",
+      playerIdentifier: "1326556798",
       hands: [
         {
           cards: [
-            { order: 0, image: require("../assets/cards/3_of_spades.png") }
+            { 
+              order: 0,
+              imageName: require("../assets/cards/3_of_spades.png"),
+              value: 3
+            }
           ],
           actions: []
         }
@@ -42,13 +64,30 @@ export class PlayersTestData {
     },
     {
       name: "Player One",
+      playerIdentifier: "951623487",
       hands: [
         {
           cards: [
-            { order: 0, image: require("../assets/cards/2_of_spades.png") },
-            { order: 1, image: require("../assets/cards/ace_of_spades.png") },
-            { order: 2, image: require("../assets/cards/4_of_spades.png") },
-            { order: 3, image: require("../assets/cards/5_of_spades.png") }
+            { 
+              order: 0,
+              imageName: require("../assets/cards/2_of_spades.png"),
+              value: 2
+            },
+            {
+              order: 1,
+              imageName: require("../assets/cards/ace_of_spades.png"),
+              value: 11
+            },
+            {
+              order: 2,
+              imageName: require("../assets/cards/4_of_spades.png"),
+              value: 4
+            },
+            {
+              order: 3,
+              imageName: require("../assets/cards/5_of_spades.png"),
+              value: 5
+            }
           ],
           actions: [Actions.Hit, Actions.Hold]
         }

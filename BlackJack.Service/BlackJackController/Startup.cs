@@ -23,12 +23,14 @@ namespace BlackJackController
 {
 	public class Startup
 	{
-		public Startup(IConfiguration configuration)
+		public Startup(IConfiguration configuration, IWebHostEnvironment environment)
 		{
 			Configuration = configuration;
+			Environment = environment;
 		}
 
 		public IConfiguration Configuration { get; }
+		public IWebHostEnvironment Environment { get; }
 
 		public void ConfigureServices(IServiceCollection services)
 		{
@@ -44,8 +46,8 @@ namespace BlackJackController
 			services.AddScoped<Deck, Deck>();
 			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
 			services.AddScoped<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
-			
-		 	//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
+
+			//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
 			//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
 		}
 
@@ -54,12 +56,17 @@ namespace BlackJackController
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseCors(x => x
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				.SetIsOriginAllowed(origin => true) // allow any origin
+				.AllowCredentials());
 			}
 
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
-
+			app.UseCors();
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>

@@ -3,7 +3,7 @@
 	public enum HandActionTypes
 	{
 		Hold = 1,
-		Draw,
+		Hit,
 		Split,
 		Pass
 	}

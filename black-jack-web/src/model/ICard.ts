@@ -1,7 +1,5 @@
-import { CardRank } from "./CardRank";
-import { CardSuit } from "./CardSuit";
-
 export interface ICard {
-  image: NodeRequire;
+  imageName: NodeRequire;
+  value: number | null;
   order: number;
 }

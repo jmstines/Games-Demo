@@ -26,7 +26,7 @@ namespace Entities
 		public void AddCard(ICard card)
 		{
 			_ = card ?? throw new ArgumentNullException(nameof(card));
-			if (Actions.Contains(HandActionTypes.Draw) == false)
+			if (Actions.Contains(HandActionTypes.Hit) == false)
 			{
 				throw new InvalidOperationException("Drawing A card is not a valid Action on this Hand.");
 			}
@@ -85,7 +85,7 @@ namespace Entities
 				{
 					actions.Add(HandActionTypes.Split);
 				}
-				actions.Add(HandActionTypes.Draw);
+				actions.Add(HandActionTypes.Hit);
 				actions.Add(HandActionTypes.Hold);
 			}
 		}

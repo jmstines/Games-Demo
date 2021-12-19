@@ -7,6 +7,7 @@ using Entities.Interfaces;
 using Entities.ResponceDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Cors;
 
 namespace BlackJackController.Controllers
 {
@@ -42,7 +43,7 @@ namespace BlackJackController.Controllers
 								Actions = new List<HandActionTypes>
 								{
 									HandActionTypes.Hold,
-									HandActionTypes.Draw,
+									HandActionTypes.Hit,
 									HandActionTypes.Pass
 								},
 								Cards = new List<BlackJackCardDto>
@@ -76,7 +77,7 @@ namespace BlackJackController.Controllers
 								Actions = new List<HandActionTypes>
 								{
 									HandActionTypes.Hold,
-									HandActionTypes.Draw,
+									HandActionTypes.Hit,
 									HandActionTypes.Pass
 								},
 								Cards = new List<BlackJackCardDto>

@@ -27,6 +27,8 @@
 </template>
 
 <script lang="ts">
+import axios from "axios";
+
 import Vue from "vue";
 import Player from "@/components/Player.vue";
 import { IPlayer, Actions, GameStatus } from "@/model/";
@@ -58,19 +60,37 @@ export default Vue.extend({
   },
   methods: {
     beginGame() {
-      this.players = new PlayersTestData().twoPlayerAfterDeal;
+      axios
+        .get("https://api.coindesk.com/v1/bpi/currentprice.json")
+        .then(response => {
+          console.log(response);
+        });
+
+      const instance = axios.create({
+        baseURL: "https://localhost:44370/",
+        withCredentials: false,
+        headers: {
+          "Access-Control-Allow-Origin": "http://localhost:8080/",
+          "Access-Control-Allow-Headers":
+            "Origin, X-Requested-With, Content-Type, Accept"
+        }
+      });
+      instance.get("blackJackGame").then(response => {
+        this.players = (response.data.players as unknown) as IPlayer[];
+      });
 
       this.gameStatus = GameStatus.InProgress;
     },
     playerAction(action: Actions): void {
-      const image = new PlayersTestData().cardsPushList.slice()[0].image;
+      const cards = new PlayersTestData().cardsPushList.slice()[0];
       const cardCount = this.players[1].hands[0].cards.length;
 
       switch (action) {
         case Actions.Hit:
           this.players[1].hands[0].cards.push({
             order: cardCount,
-            image: image
+            imageName: cards.imageName,
+            value: cards.value
           });
           this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
             action => {

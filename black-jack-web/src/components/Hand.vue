@@ -17,8 +17,8 @@ export default Vue.extend({
   props: {
     cards: {
       type: Array,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {},
   data: () => ({}),

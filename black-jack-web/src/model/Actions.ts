@@ -1,5 +1,6 @@
 export enum Actions {
-  Hit = "Hit",
-  Hold = "Hold",
-  Split = "Split"
+  Hold = 1,
+  Hit = 2,
+  Split = 3,
+  Pass = 4
 }
