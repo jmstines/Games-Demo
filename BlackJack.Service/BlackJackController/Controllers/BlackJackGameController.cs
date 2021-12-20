@@ -50,12 +50,12 @@ namespace BlackJackController.Controllers
 								{
 									new BlackJackCardDto()
 									{
-										ImageName = $"card_back_blue.jpg"
+										ImageName = $"card_back_blue"
 									},
 									new BlackJackCardDto()
 									{
 										Value = 3,
-										ImageName = $"{CardRank.Three.ToString().ToLower()}_{CardSuit.Hearts.ToString().ToLower()}.png"
+										ImageName = $"{CardRank.Three.ToString().ToLower()}_of_{CardSuit.Spades.ToString().ToLower()}"
 									}
 								},
 								CardCount = 2,
@@ -85,12 +85,12 @@ namespace BlackJackController.Controllers
 									new BlackJackCardDto()
 									{
 										Value = 5,
-										ImageName = $"{CardRank.Five.ToString().ToLower()}_{CardSuit.Clubs.ToString().ToLower()}.png"
+										ImageName = $"{CardRank.Five.ToString().ToLower()}_of_{CardSuit.Spades.ToString().ToLower()}"
 									},
 									new BlackJackCardDto()
 									{
 										Value = 5,
-										ImageName = $"{CardRank.Five.ToString().ToLower()}_{CardSuit.Hearts.ToString().ToLower()}.png"
+										ImageName = $"{CardRank.Five.ToString().ToLower()}_of_{CardSuit.Spades.ToString().ToLower()}"
 									}
 								},
 								CardCount = 2,

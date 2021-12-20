@@ -8,18 +8,19 @@ export class PlayersTestData {
       hands: [
         {
           cards: [
-            { 
-              order: 0,
+            {
               imageName: require("../assets/cards/card_back_blue.jpg"),
               value: null
             },
-            { 
-              order: 1,
+            {
               imageName: require("../assets/cards/3_of_spades.png"),
               value: 3
             }
           ],
-          actions: []
+          actions: [],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     },
@@ -29,17 +30,19 @@ export class PlayersTestData {
       hands: [
         {
           cards: [
-            { 
-              order: 0, 
+            {
               imageName: require("../assets/cards/card_back_blue.jpg"),
               value: null
             },
-            { order: 1,
+            {
               imageName: require("../assets/cards/ace_of_spades.png"),
               value: 11
-          }
+            }
           ],
-          actions: [Actions.Hit, Actions.Hold, Actions.Split]
+          actions: [Actions.Hit, Actions.Hold, Actions.Split],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     }
@@ -52,13 +55,15 @@ export class PlayersTestData {
       hands: [
         {
           cards: [
-            { 
-              order: 0,
+            {
               imageName: require("../assets/cards/3_of_spades.png"),
               value: 3
             }
           ],
-          actions: []
+          actions: [],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     },
@@ -68,28 +73,27 @@ export class PlayersTestData {
       hands: [
         {
           cards: [
-            { 
-              order: 0,
+            {
               imageName: require("../assets/cards/2_of_spades.png"),
               value: 2
             },
             {
-              order: 1,
               imageName: require("../assets/cards/ace_of_spades.png"),
               value: 11
             },
             {
-              order: 2,
               imageName: require("../assets/cards/4_of_spades.png"),
               value: 4
             },
             {
-              order: 3,
               imageName: require("../assets/cards/5_of_spades.png"),
               value: 5
             }
           ],
-          actions: [Actions.Hit, Actions.Hold]
+          actions: [Actions.Hit, Actions.Hold],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     }

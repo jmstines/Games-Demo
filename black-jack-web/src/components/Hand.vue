@@ -1,16 +1,21 @@
 <template>
   <v-container class="wrapper">
     <v-img
-      v-for="card in cards"
-      :key="card.order"
-      :src="card.image"
-      :style="cardStyle(card.order)"
+      v-for="(card, index) in cards"
+      :key="index"
+      :src="getCardImage(card.imageName)"
+      :style="cardStyle(index)"
     />
   </v-container>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
+import { CardImages } from "@/model/CardImages";
+
+interface IData {
+  cardImages: Record<string, NodeRequire>;
+}
 
 export default Vue.extend({
   name: "Hand",
@@ -21,8 +26,13 @@ export default Vue.extend({
     }
   },
   computed: {},
-  data: () => ({}),
+  data: (): IData => ({
+    cardImages: new CardImages().cardNames
+  }),
   methods: {
+    getCardImage(name: string): NodeRequire {
+      return this.cardImages[name];
+    },
     cardStyle(order: number): string {
       return `
         z-index: ${order * 10};

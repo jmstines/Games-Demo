@@ -1,12 +1,12 @@
 import { IPlayer, Actions } from "@/model/";
 
-interface ICardImage {
+interface ICard {
   imageName: NodeRequire;
   value: number;
 }
 
 export class PlayersTestData {
-  public cardsPushList: ICardImage[] = [
+  public cardsPushList: ICard[] = [
     {
       imageName: require("../assets/cards/two_of_spades.png"),
       value: 2
@@ -32,17 +32,18 @@ export class PlayersTestData {
         {
           cards: [
             {
-              order: 0,
               imageName: require("../assets/cards/card_back_blue.jpg"),
               value: null
             },
             {
-              order: 1,
               imageName: require("../assets/cards/three_of_spades.png"),
               value: 3
             }
           ],
-          actions: []
+          actions: [],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     },
@@ -53,17 +54,18 @@ export class PlayersTestData {
         {
           cards: [
             {
-              order: 0,
               imageName: require("../assets/cards/card_back_blue.jpg"),
               value: null
             },
             {
-              order: 1,
               imageName: require("../assets/cards/ace_of_spades.png"),
               value: 11
             }
           ],
-          actions: [Actions.Hit, Actions.Hold, Actions.Split]
+          actions: [Actions.Hit, Actions.Hold, Actions.Split],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     }
@@ -77,12 +79,14 @@ export class PlayersTestData {
         {
           cards: [
             {
-              order: 0,
               imageName: require("../assets/cards/three_of_spades.png"),
               value: 3
             }
           ],
-          actions: []
+          actions: [],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     },
@@ -93,27 +97,26 @@ export class PlayersTestData {
         {
           cards: [
             {
-              order: 0,
               imageName: require("../assets/cards/two_of_spades.png"),
               value: 2
             },
             {
-              order: 1,
               imageName: require("../assets/cards/ace_of_spades.png"),
               value: 11
             },
             {
-              order: 2,
               imageName: require("../assets/cards/four_of_spades.png"),
               value: 4
             },
             {
-              order: 3,
               imageName: require("../assets/cards/five_of_spades.png"),
               value: 5
             }
           ],
-          actions: [Actions.Hit, Actions.Hold]
+          actions: [Actions.Hit, Actions.Hold],
+          cardCount: 2,
+          pointValue: 3,
+          status: 3
         }
       ]
     }

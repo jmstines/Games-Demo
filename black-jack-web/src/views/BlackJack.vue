@@ -60,12 +60,6 @@ export default Vue.extend({
   },
   methods: {
     beginGame() {
-      axios
-        .get("https://api.coindesk.com/v1/bpi/currentprice.json")
-        .then(response => {
-          console.log(response);
-        });
-
       const instance = axios.create({
         baseURL: "https://localhost:44370/",
         withCredentials: false,
@@ -82,15 +76,13 @@ export default Vue.extend({
       this.gameStatus = GameStatus.InProgress;
     },
     playerAction(action: Actions): void {
-      const cards = new PlayersTestData().cardsPushList.slice()[0];
-      const cardCount = this.players[1].hands[0].cards.length;
+      const cardsList = new PlayersTestData().cardsPushList.slice()[0];
 
       switch (action) {
         case Actions.Hit:
           this.players[1].hands[0].cards.push({
-            order: cardCount,
-            imageName: cards.imageName,
-            value: cards.value
+            imageName: cardsList.imageName,
+            value: cardsList.value
           });
           this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
             action => {
