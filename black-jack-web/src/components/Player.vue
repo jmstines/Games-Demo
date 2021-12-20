@@ -7,11 +7,11 @@
       <hand :cards="hand.cards"></hand>
       <v-card-actions>
         <v-btn
-          v-for="action in hand.actions"
-          :key="action"
+          v-for="(action, index) in hand.actions"
+          :key="index"
           v-on:click="completeAction(action)"
         >
-          {{ action }}
+          {{ getAction(action) }}
         </v-btn>
       </v-card-actions>
     </div>
@@ -39,6 +39,9 @@ export default Vue.extend({
   methods: {
     completeAction(action: Actions): void {
       this.$emit("action", action);
+    },
+    getAction(value: number): string {
+      return Actions[value];
     }
   }
 });

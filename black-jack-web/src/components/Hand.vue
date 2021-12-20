@@ -27,7 +27,7 @@ export default Vue.extend({
   },
   computed: {},
   data: (): IData => ({
-    cardImages: new CardImages().cardNames
+    cardImages: new CardImages().cards
   }),
   methods: {
     getCardImage(name: string): NodeRequire {

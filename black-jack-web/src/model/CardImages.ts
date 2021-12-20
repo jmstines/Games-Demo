@@ -1,11 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
-export interface ICardImages {
-  imageFile: NodeRequire;
-  name: string;
-}
-
 export class CardImages {
-  public readonly cardNames: Record<string, NodeRequire> = {
+  public readonly cards: Record<string, NodeRequire> = {
     card_back_blue: require("../assets/cards/card_back_blue.jpg"),
     two_of_spades: require("../assets/cards/two_of_spades.png"),
     three_of_spades: require("../assets/cards/three_of_spades.png"),
