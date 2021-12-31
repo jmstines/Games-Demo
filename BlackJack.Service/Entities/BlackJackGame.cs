@@ -24,6 +24,7 @@ namespace Entities
 			{
 				throw new ArgumentOutOfRangeException(nameof(maxPlayers));
 			}
+
 			this.cardProvider = cardProvider ?? throw new ArgumentNullException(nameof(cardProvider));
 			MaxPlayerCount = maxPlayers;
 		}
@@ -112,7 +113,7 @@ namespace Entities
 		{
 			if (players.Count == MaxPlayerCount)
 			{
-				Dealer.Status = PlayerStatusTypes.Waiting;
+				Dealer.Status = PlayerStatusTypes.Ready;
 				players.Add(Dealer);
 			}
 		}
@@ -136,7 +137,7 @@ namespace Entities
 			}
 		}
 
-		private void SetReadyOnMaxPlayers() => Status = players.Count >= MaxPlayerCount - 1
+		private void SetReadyOnMaxPlayers() => Status = players.Count - 1 >= MaxPlayerCount
 				? GameStatus.Ready
 				: GameStatus.Waiting;
 	}

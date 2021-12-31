@@ -1,4 +1,6 @@
-﻿namespace Entities.Interfaces
+﻿using System;
+
+namespace Entities.Interfaces
 {
 	public interface IPlayerIdentifierProvider
 	{

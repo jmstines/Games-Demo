@@ -1,4 +1,5 @@
 ﻿using Entities.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Entities.ResponceDto
@@ -7,7 +8,6 @@ namespace Entities.ResponceDto
 	{
 		public List<BlackJackPlayerDto> Players { get; set; }
 		public string CurrentPlayerId { get; set; }
-		public string DealerId { get; set; }
 		public GameStatus Status { get; set; }
 	}
 }

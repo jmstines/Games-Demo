@@ -8,8 +8,8 @@ namespace Entities
 	// TODO - Add Tests for the Mapper Class
 	public static class MapperBlackJackGameDto
 	{
-		private const string CardBackName = "card_back_blue.jpg";
-		public static BlackJackGameDto Map(BlackJackGame game, string playerId)
+		private const string CardBackName = "card_back_blue";
+		public static BlackJackGameDto ToDto(this BlackJackGame game, string playerId)
 		{
 			_ = game ?? throw new ArgumentNullException(nameof(game));
 			var dto = new BlackJackGameDto
@@ -52,13 +52,15 @@ namespace Entities
 			List<HandDto> handDtos = new List<HandDto>();
 			foreach (var hand in hands)
 			{
+				var cards = MapCards(hand.Cards, showAll);
 				var dto = new HandDto
 				{
-					Cards = MapCards(hand.Cards, showAll),
+					
+					Cards = cards,
 					Identifier = hand.Identifier,
 					Actions = hand.Actions,
 					CardCount = hand.Cards.Count(),
-					PointValue = hand.PointValue,
+					PointValue = cards.Sum(x => x.Value),
 					Status = hand.Status
 				};
 				handDtos.Add(dto);
@@ -84,13 +86,13 @@ namespace Entities
 			{
 				return new BlackJackCardDto()
 				{
-					ImageName = CardBackName,
+					ImageName = CardBackName
 				};
 			}
 
 			return new BlackJackCardDto()
 			{
-				ImageName = $"{card.Rank.ToString().ToLower()}_of_{card.Suit.ToString().ToLower()}.png",
+				ImageName = $"{card.Rank.ToString().ToLower()}_of_{card.Suit.ToString().ToLower()}",
 				Value = card.Value
 			};
 		}

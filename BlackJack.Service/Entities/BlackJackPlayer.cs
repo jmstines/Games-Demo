@@ -19,8 +19,8 @@ namespace Entities
 
 		public BlackJackPlayer(AvitarDto avitar, IHandIdentifierProvider handIdProvider, int handCount)
 		{
-			Name = avitar.userName ?? throw new ArgumentNullException(nameof(avitar.userName));
-			Identifier = avitar.id ?? throw new ArgumentNullException(nameof(avitar.id));
+			Name = avitar.UserName ?? throw new ArgumentNullException(nameof(avitar.UserName));
+			Identifier = avitar.Id;
 			this.handIdProvider = handIdProvider ?? throw new ArgumentNullException(nameof(handIdProvider));
 			if (handCount < 1)
 			{
@@ -35,7 +35,7 @@ namespace Entities
 		{
 			if (Status != PlayerStatusTypes.Ready)
 			{
-				throw new InvalidOperationException("Player Status Must be Waiting to Deal Hands.");
+				throw new InvalidOperationException("Player Status Must be Ready to Deal Hands.");
 			}
 			if (cards.Count() != hands.Count * 2)
 			{

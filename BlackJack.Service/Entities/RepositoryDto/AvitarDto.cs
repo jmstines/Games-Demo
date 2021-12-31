@@ -1,12 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
-
-namespace Entities.RepositoryDto
+﻿namespace Entities.RepositoryDto
 {
 	public class AvitarDto
 	{
 		
-		public string id { get; set; }
-		public string userName { get; set; }
-		public string emailAddress { get; set; }
+		public string Id { get; set; }
+		public string UserName { get; set; }
+		public string EmailAddress { get; set; }
 	}
 }

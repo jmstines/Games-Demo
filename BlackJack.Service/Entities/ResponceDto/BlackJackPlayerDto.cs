@@ -1,4 +1,5 @@
 ﻿using Entities.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Entities.ResponceDto

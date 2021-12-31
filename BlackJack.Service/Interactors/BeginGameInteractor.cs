@@ -33,7 +33,7 @@ namespace Interactors
 			game.DealHands();
 
 			GameRepository.UpdateAsync(requestModel.GameIdentifier, game);
-			var gameDto = MapperBlackJackGameDto.Map(game, requestModel.PlayerIdentifier);
+			var gameDto = MapperBlackJackGameDto.ToDto(game, requestModel.PlayerIdentifier);
 			outputBoundary.HandleResponse(new ResponseModel() { Game = gameDto });
 		}
 	}

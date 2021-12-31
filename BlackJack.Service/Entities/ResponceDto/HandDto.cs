@@ -1,4 +1,5 @@
 ﻿using Entities.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Entities.ResponceDto
@@ -9,7 +10,7 @@ namespace Entities.ResponceDto
 		public IEnumerable<HandActionTypes> Actions { get; set; }
 		public IEnumerable<BlackJackCardDto> Cards { get; set; }
 		public int CardCount { get; set; }
-		public int PointValue { get; set; }
+		public int? PointValue { get; set; }
 		public HandStatusTypes Status { get; set; }
 	}
 }

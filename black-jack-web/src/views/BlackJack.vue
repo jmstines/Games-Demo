@@ -61,7 +61,7 @@ export default Vue.extend({
   methods: {
     beginGame() {
       const instance = axios.create({
-        baseURL: "https://localhost:44370/",
+        baseURL: "https://localhost:44370/blackJackGame/",
         withCredentials: false,
         headers: {
           "Access-Control-Allow-Origin": "http://localhost:8080/",
@@ -69,7 +69,11 @@ export default Vue.extend({
             "Origin, X-Requested-With, Content-Type, Accept"
         }
       });
-      instance.get("blackJackGame").then(response => {
+      instance.get("BeginGame", { 
+        params: {
+         playerId: "8f4f9270-0f14-45b7-83cd-4262aa8f89d0"
+        }})
+      .then(response => {
         this.players = (response.data.players as unknown) as IPlayer[];
       });
 

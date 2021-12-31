@@ -19,7 +19,7 @@ namespace Entities
 
 		public Hand(string identifier)
 		{
-			Identifier = identifier ?? throw new ArgumentNullException(nameof(identifier));
+			Identifier = identifier;
 			SetHandActions();
 		}
 
