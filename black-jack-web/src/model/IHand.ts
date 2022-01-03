@@ -6,4 +6,5 @@ export interface IHand {
   cardCount: number;
   pointValue: number;
   status: number;
+  identifier: string;
 }

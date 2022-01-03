@@ -4,7 +4,7 @@
       <v-row dense justify="center">
         <v-col cols="6">
           <h1 class="d-flex justify-center">
-            This is the Black Jack Game page.
+            {{ applicationTitle }}
           </h1>
           <h3 class="d-flex justify-center">Turn {{ turn }}</h3>
         </v-col>
@@ -27,11 +27,10 @@
 </template>
 
 <script lang="ts">
-import axios from "axios";
-
 import Vue from "vue";
 import Player from "@/components/Player.vue";
 import { IPlayer, Actions, GameStatus } from "@/model/";
+import { BlackJackApi } from "@/services/BlackJackApi";
 
 // TODO: Remove after function wire up
 import { PlayersTestData } from "@/model/FakeData";
@@ -42,6 +41,8 @@ interface IData {
   players: IPlayer[];
   gameStatus: GameStatus;
 }
+
+const api = new BlackJackApi();
 
 export default Vue.extend({
   name: "BlackJack",
@@ -56,43 +57,29 @@ export default Vue.extend({
   computed: {
     gameWaiting(): boolean {
       return this.gameStatus === GameStatus.Waiting;
+    },
+    applicationTitle(): string {
+      const env = process.env.VUE_APP_ENV;
+      return `BlackJack Game ${env}`;
     }
   },
   methods: {
-    beginGame() {
-      const instance = axios.create({
-        baseURL: "https://localhost:44370/blackJackGame/",
-        withCredentials: false,
-        headers: {
-          "Access-Control-Allow-Origin": "http://localhost:8080/",
-          "Access-Control-Allow-Headers":
-            "Origin, X-Requested-With, Content-Type, Accept"
-        }
-      });
-      instance.get("BeginGame", { 
-        params: {
-         playerId: "8f4f9270-0f14-45b7-83cd-4262aa8f89d0"
-        }})
-      .then(response => {
-        this.players = (response.data.players as unknown) as IPlayer[];
-      });
-
-      this.gameStatus = GameStatus.InProgress;
+    async beginGame(): Promise<void> {
+      this.players = await api.BeginGame(
+        "416f159f-0d56-49ea-a3ef-64e98cc13a06",
+        1,
+        1
+      );
     },
-    playerAction(action: Actions): void {
-      const cardsList = new PlayersTestData().cardsPushList.slice()[0];
-
+    async playerAction(
+      action: Actions,
+      handId: string,
+      playerId: string
+    ): Promise<void> {
+      
       switch (action) {
         case Actions.Hit:
-          this.players[1].hands[0].cards.push({
-            imageName: cardsList.imageName,
-            value: cardsList.value
-          });
-          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
-            action => {
-              return action !== Actions.Split && action !== Actions.Hold;
-            }
-          );
+          this.players = await api.Hit(playerId, handId);
           break;
         case Actions.Hold:
           this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(

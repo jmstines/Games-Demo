@@ -2,6 +2,6 @@ import { IHand } from "@/model/";
 
 export interface IPlayer {
   name: string;
-  playerIdentifier: string;
+  id: string;
   hands: IHand[];
 }

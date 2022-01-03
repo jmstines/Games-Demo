@@ -4,9 +4,10 @@ export class PlayersTestData {
   public twoPlayerAfterDeal: IPlayer[] = [
     {
       name: "Dealer",
-      playerIdentifier: "654987321",
+      id: "654987321",
       hands: [
         {
+          identifier: "",
           cards: [
             {
               imageName: require("../assets/cards/card_back_blue.jpg"),
@@ -26,9 +27,10 @@ export class PlayersTestData {
     },
     {
       name: "Player One",
-      playerIdentifier: "978756321",
+      id: "978756321",
       hands: [
         {
+          identifier: "",
           cards: [
             {
               imageName: require("../assets/cards/card_back_blue.jpg"),
@@ -51,9 +53,10 @@ export class PlayersTestData {
   public twoPlayerMaxCards: IPlayer[] = [
     {
       name: "Dealer",
-      playerIdentifier: "1326556798",
+      id: "1326556798",
       hands: [
         {
+          identifier: "",
           cards: [
             {
               imageName: require("../assets/cards/3_of_spades.png"),
@@ -69,9 +72,10 @@ export class PlayersTestData {
     },
     {
       name: "Player One",
-      playerIdentifier: "951623487",
+      id: "951623487",
       hands: [
         {
+          identifier: "",
           cards: [
             {
               imageName: require("../assets/cards/2_of_spades.png"),

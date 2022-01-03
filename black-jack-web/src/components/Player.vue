@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="2" class="rounded-lg" outlined shaped tile>
+  <v-card elevation="2" height="350" class="rounded-lg" outlined shaped tile>
     <v-card-text>
       <p class="display-1 text--primary">{{ player.name }}</p>
     </v-card-text>
@@ -9,7 +9,7 @@
         <v-btn
           v-for="(action, index) in hand.actions"
           :key="index"
-          v-on:click="completeAction(action)"
+          v-on:click="completeAction(action, hand.identifier, player.id)"
         >
           {{ getAction(action) }}
         </v-btn>
@@ -37,8 +37,8 @@ export default Vue.extend({
   computed: {},
   data: () => ({}),
   methods: {
-    completeAction(action: Actions): void {
-      this.$emit("action", action);
+    completeAction(action: Actions, handId: string, playerId: string): void {
+      this.$emit("action", action, handId, playerId);
     },
     getAction(value: number): string {
       return Actions[value];

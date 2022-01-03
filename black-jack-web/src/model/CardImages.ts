@@ -53,6 +53,6 @@ export class CardImages {
     jack_of_hearts: require("../assets/cards/jack_of_hearts.png"),
     queen_of_hearts: require("../assets/cards/queen_of_hearts.png"),
     king_of_hearts: require("../assets/cards/king_of_hearts.png"),
-    ace_of_hearts: require("../assets/cards/ace_of_hearts.png"),
+    ace_of_hearts: require("../assets/cards/ace_of_hearts.png")
   };
 }

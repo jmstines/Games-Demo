@@ -60,19 +60,18 @@ namespace BlackJackController.Controllers
 			player.Status = PlayerStatusTypes.Ready;
 			CurrentGame.AddPlayer(player);
 			CurrentGame.DealHands();
+			CurrentGame.Status = GameStatus.InProgress;
 
 			return CurrentGame.ToDto(playerId);
 		}
 
-		[HttpPost]
+		[HttpGet]
+		[Route("Hit")]
 		public BlackJackGameDto Hit(string playerId, string  handId)
 		{
-			var temp = CurrentGame.CurrentPlayer.Hands.Single(x => x.Identifier == handId);
-
-			// This needs work.
-			var card = _cardProvider.Cards(1).Single();
-
-			temp.AddCard(card);
+			//TODO implement in memory DB for testing.
+			//TODO on error return current game with error message
+			CurrentGame.PlayerHits(playerId, handId);
 
 			return CurrentGame.ToDto(playerId);
 		}

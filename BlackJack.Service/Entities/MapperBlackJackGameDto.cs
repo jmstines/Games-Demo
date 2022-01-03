@@ -1,4 +1,5 @@
-﻿using Entities.ResponceDto;
+﻿using Entities.Enums;
+using Entities.ResponceDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace Entities
 			return new BlackJackPlayerDto
 			{
 				Name = player.Name,
-				PlayerIdentifier = player.Identifier,
+				Id = player.Identifier,
 				Hands = MapHand(player.Hands, showAll),
 				Status = player.Status
 			};
@@ -58,7 +59,7 @@ namespace Entities
 					
 					Cards = cards,
 					Identifier = hand.Identifier,
-					Actions = hand.Actions,
+					Actions = GetHandActions(hand.Actions, showAll), 
 					CardCount = hand.Cards.Count(),
 					PointValue = cards.Sum(x => x.Value),
 					Status = hand.Status
@@ -67,6 +68,10 @@ namespace Entities
 			}
 			return handDtos;
 		}
+
+		private static IEnumerable<HandActionTypes> GetHandActions(
+			IEnumerable<HandActionTypes> actions, bool showAll) =>
+			showAll ? actions : Enumerable.Empty<HandActionTypes>();
 
 		private static List<BlackJackCardDto> MapCards(IEnumerable<BlackJackCard> cards, bool showAll)
 		{
