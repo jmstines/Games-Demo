@@ -1,4 +1,4 @@
-import { IPlayer } from "@/model/";
+import { IGame } from "@/model/";
 import axios from "axios";
 
 export class BlackJackApi {
@@ -12,7 +12,7 @@ export class BlackJackApi {
     playerId: string,
     numberOfPlayers = 1,
     handCount = 1
-  ): Promise<IPlayer[]> {
+  ): Promise<IGame> {
     return await this.axiosInstance
       .get("BeginGame", {
         params: {
@@ -22,20 +22,25 @@ export class BlackJackApi {
         }
       })
       .then(response => {
-        return (response.data.players as unknown) as IPlayer[];
+        return (response.data as unknown) as IGame;
       });
   }
 
-  public async Hit(playerId: string, handId: string): Promise<IPlayer[]> {
+  public async Hit(
+    gameid: string,
+    playerId: string,
+    handId: string
+  ): Promise<IGame> {
     return await this.axiosInstance
       .get("Hit", {
         params: {
+          gameId: gameid,
           playerId: playerId,
           handId: handId
         }
       })
       .then(response => {
-        return (response.data.players as unknown) as IPlayer[];
+        return (response.data as unknown) as IGame;
       });
   }
 }

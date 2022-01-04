@@ -7,22 +7,24 @@ using System.Linq;
 namespace Entities
 {
 	// TODO - Add Tests for the Mapper Class
-	public static class MapperBlackJackGameDto
+	public static class MapperBlackJackGameModel
 	{
 		private const string CardBackName = "card_back_blue";
-		public static BlackJackGameDto ToDto(this BlackJackGame game, string playerId)
+		public static BlackJackGameModel
+			ToDto(this BlackJackGame game, string playerId)
 		{
 			_ = game ?? throw new ArgumentNullException(nameof(game));
-			var dto = new BlackJackGameDto
+			var dto = new BlackJackGameModel
 			{
 				Status = game.Status,
 				CurrentPlayerId = game.CurrentPlayer.Identifier,
-				Players = new List<BlackJackPlayerDto>()
+				Id = game.Id,
+				Players = new List<BlackJackPlayerModel>()
 			};
 
 			foreach (var player in game.Players)
 			{
-				BlackJackPlayerDto playerDto;
+				BlackJackPlayerModel playerDto;
 				if (game.Status != Enums.GameStatus.Complete)
 				{
 					var isCurrentPlayer = player.Identifier.Equals(playerId);
@@ -37,9 +39,9 @@ namespace Entities
 			return dto;
 		}
 
-		private static BlackJackPlayerDto MapPlayer(BlackJackPlayer player, bool showAll)
+		private static BlackJackPlayerModel MapPlayer(BlackJackPlayer player, bool showAll)
 		{
-			return new BlackJackPlayerDto
+			return new BlackJackPlayerModel
 			{
 				Name = player.Name,
 				Id = player.Identifier,
@@ -48,13 +50,13 @@ namespace Entities
 			};
 		}
 
-		private static List<HandDto> MapHand(IEnumerable<Hand> hands, bool showAll)
+		private static List<HandModel> MapHand(IEnumerable<Hand> hands, bool showAll)
 		{
-			List<HandDto> handDtos = new List<HandDto>();
+			List<HandModel> handDtos = new List<HandModel>();
 			foreach (var hand in hands)
 			{
 				var cards = MapCards(hand.Cards, showAll);
-				var dto = new HandDto
+				var dto = new HandModel
 				{
 					
 					Cards = cards,
@@ -73,9 +75,9 @@ namespace Entities
 			IEnumerable<HandActionTypes> actions, bool showAll) =>
 			showAll ? actions : Enumerable.Empty<HandActionTypes>();
 
-		private static List<BlackJackCardDto> MapCards(IEnumerable<BlackJackCard> cards, bool showAll)
+		private static List<BlackJackCardModel> MapCards(IEnumerable<BlackJackCard> cards, bool showAll)
 		{
-			var cardDtos = new List<BlackJackCardDto>();
+			var cardDtos = new List<BlackJackCardModel>();
 
 			foreach(var card in cards)
 			{
@@ -85,17 +87,17 @@ namespace Entities
 			return cardDtos;
 		}
 
-		private static BlackJackCardDto MapCard(BlackJackCard card, bool showAll)
+		private static BlackJackCardModel MapCard(BlackJackCard card, bool showAll)
 		{
 			if (ShouldShowCardBack(card.FaceDown, showAll))
 			{
-				return new BlackJackCardDto()
+				return new BlackJackCardModel()
 				{
 					ImageName = CardBackName
 				};
 			}
 
-			return new BlackJackCardDto()
+			return new BlackJackCardModel()
 			{
 				ImageName = $"{card.Rank.ToString().ToLower()}_of_{card.Suit.ToString().ToLower()}",
 				Value = card.Value

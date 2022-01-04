@@ -11,14 +11,14 @@ namespace Interactors.Repositories
 
 		public InMemoryGameRepository() => Games = new Dictionary<string, BlackJackGame>();
 
-		public void CreateAsync(string identifier, BlackJackGame game) => Games.Add(identifier, game);
+		public void CreateAsync(BlackJackGame game) => Games.Add(game.Id, game);
 
 		public BlackJackGame ReadAsync(string identifier) => Games.Single(g => g.Key.Equals(identifier)).Value;
 
 		public void UpdateAsync(string identifier, BlackJackGame game)
 		{
 			Games.Remove(identifier);
-			CreateAsync(identifier, game);
+			CreateAsync(game);
 		}
 
 		public KeyValuePair<string, BlackJackGame> FindByStatusFirstOrDefault(GameStatus status, int maxPlayers)

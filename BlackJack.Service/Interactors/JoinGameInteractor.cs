@@ -60,7 +60,7 @@ namespace Interactors
 			if (string.IsNullOrEmpty(keyAndGame.Key))
 			{
 				gameIdentifier = GameIdProviders.GenerateGameId();
-				game = new BlackJackGame(CardProvider, DealerProvider.Dealer, requestModel.MaxPlayers);
+				game = new BlackJackGame(gameIdentifier, CardProvider, DealerProvider.Dealer, requestModel.MaxPlayers);
 			}
 			else
 			{

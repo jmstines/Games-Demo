@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using Microsoft.AspNetCore.Cors;
 using Entities.RepositoryDto;
+using Interactors.Repositories;
 
 namespace BlackJackController.Controllers
 {
@@ -18,19 +19,25 @@ namespace BlackJackController.Controllers
 	public class BlackJackGameController : ControllerBase
 	{
 		private readonly ILogger<BlackJackGameController> _logger;
+		private readonly IGameRepository _gameRepo;
+		private readonly IGameIdentifierProvider _gameIdProvider;
 		private readonly ICardProvider _cardProvider;
 		private readonly IDealerProvider _dealerProvider;
 		private readonly IHandIdentifierProvider _handIdProvider;
-		private BlackJackGame CurrentGame;
+		
 
 		public BlackJackGameController(
 			ILogger<BlackJackGameController> logger,
+			IGameRepository gameRepository,
+			IGameIdentifierProvider gameIdProvider,
 			ICardProvider cardProvider,
 			IDealerProvider dealerProvider,
 			IHandIdentifierProvider handIdProvider
 			)
 		{
 			_logger = logger;
+			_gameRepo = gameRepository;
+			_gameIdProvider = gameIdProvider;
 			_cardProvider = cardProvider;
 			_dealerProvider = dealerProvider;
 			_handIdProvider = handIdProvider;
@@ -39,7 +46,7 @@ namespace BlackJackController.Controllers
 		//https://localhost:44370/blackJackGame/BeginGame?playerId=%228f4f9270-0f14-45b7-83cd-4262aa8f89d0%22
 		[HttpGet]
 		[Route("BeginGame")]
-		public BlackJackGameDto BeginGame(string playerId, int numberOfPlayers = 1, int numberOfHands = 1)
+		public BlackJackGameModel BeginGame(string playerId, int numberOfPlayers = 1, int numberOfHands = 1)
 		{
 			if (string.IsNullOrEmpty(playerId))
 			{
@@ -55,25 +62,32 @@ namespace BlackJackController.Controllers
 			};
 			var player = new BlackJackPlayer(avitar, _handIdProvider, numberOfHands);
 			
-			CurrentGame = new BlackJackGame(_cardProvider, dealer, numberOfPlayers);
+			var gameId = _gameIdProvider.GenerateGameId();
+			var game = new BlackJackGame(gameId, _cardProvider, dealer, numberOfPlayers);
 
 			player.Status = PlayerStatusTypes.Ready;
-			CurrentGame.AddPlayer(player);
-			CurrentGame.DealHands();
-			CurrentGame.Status = GameStatus.InProgress;
 
-			return CurrentGame.ToDto(playerId);
+			game.AddPlayer(player);
+			game.Deal();
+			game.Status = GameStatus.InProgress;
+			
+			_gameRepo.CreateAsync(game);
+
+			return game.ToDto(playerId);
 		}
 
 		[HttpGet]
 		[Route("Hit")]
-		public BlackJackGameDto Hit(string playerId, string  handId)
+		public BlackJackGameModel Hit(string gameId, string playerId, string  handId)
 		{
-			//TODO implement in memory DB for testing.
 			//TODO on error return current game with error message
-			CurrentGame.PlayerHits(playerId, handId);
+			var game = _gameRepo.ReadAsync(gameId);
 
-			return CurrentGame.ToDto(playerId);
+			game.PlayerHits(playerId, handId);
+
+			_gameRepo.UpdateAsync(gameId, game);
+
+			return game.ToDto(playerId);
 		}
 
 		//[HttpPost]

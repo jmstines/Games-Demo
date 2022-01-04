@@ -16,7 +16,7 @@ namespace Interactors
 
 		public class ResponseModel
 		{
-			public BlackJackGameDto Game { get; set; }
+			public BlackJackGameModel Game { get; set; }
 		}
 
 		private readonly IGameRepository GameRepository;
@@ -30,10 +30,10 @@ namespace Interactors
 		{
 			var game = GameRepository.ReadAsync(requestModel.GameIdentifier);
 			game.SetPlayerStatusReady(requestModel.PlayerIdentifier);
-			game.DealHands();
+			game.Deal();
 
 			GameRepository.UpdateAsync(requestModel.GameIdentifier, game);
-			var gameDto = MapperBlackJackGameDto.ToDto(game, requestModel.PlayerIdentifier);
+			var gameDto = MapperBlackJackGameModel.ToDto(game, requestModel.PlayerIdentifier);
 			outputBoundary.HandleResponse(new ResponseModel() { Game = gameDto });
 		}
 	}

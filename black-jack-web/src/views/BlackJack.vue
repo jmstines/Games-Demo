@@ -17,7 +17,7 @@
         </v-col>
       </v-row>
       <v-row dense justify="center">
-        <v-col cols="4" v-for="player in players" :key="player.name">
+        <v-col cols="4" v-for="player in game.players" :key="player.name">
           <Player :player="player" :turn="turn" v-on:action="playerAction">
           </Player>
         </v-col>
@@ -29,17 +29,13 @@
 <script lang="ts">
 import Vue from "vue";
 import Player from "@/components/Player.vue";
-import { IPlayer, Actions, GameStatus } from "@/model/";
+import { Actions, GameStatus, IGame } from "@/model/";
 import { BlackJackApi } from "@/services/BlackJackApi";
-
-// TODO: Remove after function wire up
-import { PlayersTestData } from "@/model/FakeData";
 
 // TODO: Implement SSE for push event back to client
 interface IData {
   turn: number;
-  players: IPlayer[];
-  gameStatus: GameStatus;
+  game: IGame;
 }
 
 const api = new BlackJackApi();
@@ -51,12 +47,16 @@ export default Vue.extend({
   },
   data: (): IData => ({
     turn: 1,
-    players: [],
-    gameStatus: GameStatus.Waiting
+    game: {
+      players: [],
+      currentPlayerId: "",
+      status: GameStatus.Waiting,
+      id: ""
+    }
   }),
   computed: {
     gameWaiting(): boolean {
-      return this.gameStatus === GameStatus.Waiting;
+      return this.game.status === GameStatus.Waiting;
     },
     applicationTitle(): string {
       const env = process.env.VUE_APP_ENV;
@@ -65,7 +65,7 @@ export default Vue.extend({
   },
   methods: {
     async beginGame(): Promise<void> {
-      this.players = await api.BeginGame(
+      this.game = await api.BeginGame(
         "416f159f-0d56-49ea-a3ef-64e98cc13a06",
         1,
         1
@@ -76,25 +76,26 @@ export default Vue.extend({
       handId: string,
       playerId: string
     ): Promise<void> {
-      
       switch (action) {
         case Actions.Hit:
-          this.players = await api.Hit(playerId, handId);
+          this.game = await api.Hit(this.game.id, playerId, handId);
           break;
         case Actions.Hold:
-          this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
-            action => {
-              return (
-                action !== Actions.Hit &&
-                action !== Actions.Hold &&
-                action !== Actions.Split
-              );
-            }
-          );
+          console.error("Action Type Not Implemented.");
+          // this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
+          //   action => {
+          //     return (
+          //       action !== Actions.Hit &&
+          //       action !== Actions.Hold &&
+          //       action !== Actions.Split
+          //     );
+          //   }
+          // );
           break;
         case Actions.Split:
-          this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]];
-          this.players[1].hands.push(this.players[1].hands[0]);
+          console.error("Action Type Not Implemented.");
+          // this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]];
+          // this.players[1].hands.push(this.players[1].hands[0]);
           break;
         default:
           throw new Error("Action Type Not found.");

@@ -8,16 +8,17 @@ namespace Entities
 {
 	public class BlackJackGame
 	{
-		private readonly List<BlackJackPlayer> players = new List<BlackJackPlayer>();
-		private readonly ICardProvider cardProvider;
+		private readonly List<BlackJackPlayer> _players = new List<BlackJackPlayer>();
+		private readonly ICardProvider _cardProvider;
 
-		public IEnumerable<BlackJackPlayer> Players => players;
+		public IEnumerable<BlackJackPlayer> Players => _players;
 		public BlackJackPlayer CurrentPlayer { get; private set; }
 		public BlackJackPlayer Dealer { get; private set; }
 		public GameStatus Status { get; set; } = GameStatus.Waiting;
 		public int MaxPlayerCount { get; private set; }
+		public string Id { get; private set; }
 
-		public BlackJackGame(ICardProvider cardProvider, BlackJackPlayer dealer, int maxPlayers)
+		public BlackJackGame(string gameId, ICardProvider cardProvider, BlackJackPlayer dealer, int maxPlayers)
 		{
 			Dealer = dealer ?? throw new ArgumentNullException(nameof(dealer));
 			if (maxPlayers < 1)
@@ -25,18 +26,19 @@ namespace Entities
 				throw new ArgumentOutOfRangeException(nameof(maxPlayers));
 			}
 
-			this.cardProvider = cardProvider ?? throw new ArgumentNullException(nameof(cardProvider));
+			this._cardProvider = cardProvider ?? throw new ArgumentNullException(nameof(cardProvider));
+			Id = gameId;
 			MaxPlayerCount = maxPlayers;
 		}
 
 		public void AddPlayer(BlackJackPlayer player)
 		{
 			_ = player ?? throw new ArgumentNullException(nameof(player));
-			if (players.Count >= MaxPlayerCount)
+			if (_players.Count >= MaxPlayerCount)
 			{
 				throw new InvalidOperationException($"{player.Name} can NOT join game, The game Status is {Status}.");
 			}
-			players.Add(player);
+			_players.Add(player);
 
 			SetCurrentPlayerOnFirstPlayerAdd();
 			AddDealerToListAfterFinalPlayer();
@@ -45,7 +47,7 @@ namespace Entities
 
 		public void SetPlayerStatusReady(string playerIdentifier)
 		{
-			var player = players.Where(p => p.Identifier.Equals(playerIdentifier)).SingleOrDefault();
+			var player = GetPlayerById(playerIdentifier);
 			if (player == null) 
 			{
 				throw new ArgumentException(nameof(playerIdentifier), "Player Id NOT Found.");
@@ -63,12 +65,10 @@ namespace Entities
 				throw new ArgumentException(nameof(playerIdentifier), $"Please wait your turn, Current player is {CurrentPlayer.Name}");
 			}
 
-			var player = Players.Single(p => p.Identifier == playerIdentifier);
+			var player = GetPlayerById(playerIdentifier);
 			player.Hold(handIdentifier);
 
-			CurrentPlayer = player.Identifier == Dealer.Identifier
-					? Players.First()
-					: Players.SkipWhile(p => p.Identifier != playerIdentifier).Skip(1).Take(1).Single();
+			UpdateCurrentPlayer(player);
 			SetGameCompleteOnAllPlayersComplete();
 		}
 
@@ -81,52 +81,64 @@ namespace Entities
 				throw new ArgumentException(nameof(playerIdentifier), $"Please wait your turn, Current player is {CurrentPlayer.Name}");
 			}
 
-			Players.Single(p => p.Identifier == playerIdentifier)
-					.Hit(handIdentifier, cardProvider.Cards(1).Single());
+			var player = GetPlayerById(playerIdentifier);
+			player.AddCard(handIdentifier, _cardProvider.Cards(1).Single());
+
 			SetGameCompleteOnAllPlayersComplete();
 		}
 
-		public void DealHands()
+		public void Deal()
 		{
 			if (Status != GameStatus.Ready)
 			{
 				throw new ArgumentOutOfRangeException(nameof(Status), "Game Status Must be Ready to Deal Hands.");
 			}
 
-			var cardCount = players.Sum(p => p.Hands.Count());
-			var cards = cardProvider.Cards(cardCount);
+			var cardCount = _players.Sum(p => p.Hands.Count());
+			var cards = _cardProvider.Cards(cardCount);
 
-			players.ForEach(p => p.DealHands(cards.Take(p.Hands.Count() * 2)));
+			_players.ForEach(p => p.DealHands(cards.Take(p.Hands.Count() * 2)));
 			
 			Status = GameStatus.InProgress;
 		}
 
+		private BlackJackPlayer GetPlayerById(string id)
+		{
+			return _players.Where(p => p.Identifier == id).SingleOrDefault();
+		}
+
 		private void SetCurrentPlayerOnFirstPlayerAdd()
 		{
-			if (players.Count == 1)
+			if (_players.Count == 1)
 			{
-				CurrentPlayer = players.First();
+				CurrentPlayer = _players.First();
 			}
 		}
 
+		private void UpdateCurrentPlayer(BlackJackPlayer player) => 
+			CurrentPlayer = player.Identifier == Dealer.Identifier
+					? _players.First()
+					: _players.SkipWhile(p => p.Identifier != player.Identifier)
+			.Skip(1).Take(1).Single();
+
 		private void AddDealerToListAfterFinalPlayer()
 		{
-			if (players.Count == MaxPlayerCount)
+			if (_players.Count == MaxPlayerCount)
 			{
 				Dealer.Status = PlayerStatusTypes.Ready;
-				players.Add(Dealer);
+				_players.Add(Dealer);
 			}
 		}
 
 		private void SetGameCompleteOnAllPlayersComplete() => Status =
-				players.All(p => p.Status.Equals(PlayerStatusTypes.Complete))
+				_players.All(p => p.Status.Equals(PlayerStatusTypes.Complete))
 				? GameStatus.Complete
 				: GameStatus.InProgress;
 
 		private void SetGameInProgressOnAllPlayersReady()
 		{
-			if (players.Count >= MaxPlayerCount 
-				&& players.Where(p => p != Dealer).All(p => p.Status.Equals(PlayerStatusTypes.Ready)))
+			if (_players.Count >= MaxPlayerCount 
+				&& _players.Where(p => p != Dealer).All(p => p.Status.Equals(PlayerStatusTypes.Ready)))
 			{
 				Status = GameStatus.Ready;
 				Dealer.Status = PlayerStatusTypes.Ready;
@@ -137,7 +149,7 @@ namespace Entities
 			}
 		}
 
-		private void SetReadyOnMaxPlayers() => Status = players.Count - 1 >= MaxPlayerCount
+		private void SetReadyOnMaxPlayers() => Status = _players.Count - 1 >= MaxPlayerCount
 				? GameStatus.Ready
 				: GameStatus.Waiting;
 	}

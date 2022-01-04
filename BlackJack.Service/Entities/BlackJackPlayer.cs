@@ -46,7 +46,7 @@ namespace Entities
 			Status = PlayerStatusTypes.InProgress;
 		}
 
-		public void Hit(string handIdentifier, ICard card)
+		public void AddCard(string handIdentifier, ICard card)
 		{
 			var hand = Hands.SingleOrDefault(h => h.Identifier == handIdentifier);
 			if (hand == null)

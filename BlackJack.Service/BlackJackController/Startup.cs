@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlackJackController.Data;
 using Entities;
 using Entities.Interfaces;
 using Entities.Providers;
@@ -46,6 +47,7 @@ namespace BlackJackController
 			services.AddScoped<Deck, Deck>();
 			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
 			services.AddScoped<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
+			services.AddSingleton<IGameRepository, InMemoryGameRepo>();
 
 			//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
 			//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
