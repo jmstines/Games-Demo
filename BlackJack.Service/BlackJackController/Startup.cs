@@ -38,16 +38,16 @@ namespace BlackJackController
 			services.AddControllers();
 
 			services.AddScoped<IPlayerRepository, InMemoryPlayerRepository>();
-			services.AddScoped<IGameRepository, InMemoryGameRepository>();
-			services.AddScoped<IGameIdentifierProvider, GuidBasedGameIdentifierProvider>();
-			services.AddScoped<IDealerProvider, DealerProvider>();
-			services.AddScoped<IRandomProvider, RandomProvider>();
-			services.AddScoped<IHandIdentifierProvider, GuidBasedHandIdentifierProvider>();
-			services.AddScoped<ICardProvider, CardProvider>();
-			services.AddScoped<Deck, Deck>();
-			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
-			services.AddScoped<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
 			services.AddSingleton<IGameRepository, InMemoryGameRepo>();
+			services.AddSingleton<IGameIdentifierProvider, GuidBasedGameIdentifierProvider>();
+			services.AddSingleton<IDealerProvider, DealerProvider>();
+			services.AddSingleton<IRandomProvider, RandomProvider>();
+			services.AddSingleton<IHandIdentifierProvider, GuidBasedHandIdentifierProvider>();
+			services.AddSingleton<ICardProvider, CardProvider>();
+			services.AddSingleton<Deck, Deck>();
+			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
+			services.AddSingleton<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
+			//services.AddSingleton<IGameRepository, InMemoryGameRepo>();
 
 			//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
 			//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);

@@ -43,37 +43,36 @@ namespace BlackJackController.Controllers
 			_handIdProvider = handIdProvider;
 		}
 
+		//TODO need to move logic to game class
+
 		//https://localhost:44370/blackJackGame/BeginGame?playerId=%228f4f9270-0f14-45b7-83cd-4262aa8f89d0%22
 		[HttpGet]
 		[Route("BeginGame")]
-		public BlackJackGameModel BeginGame(string playerId, int numberOfPlayers = 1, int numberOfHands = 1)
+		public BlackJackGameModel BeginGame(string gameId, string playerId)
 		{
 			if (string.IsNullOrEmpty(playerId))
 			{
 				throw new ArgumentNullException(nameof(playerId));
 			}
 
-			var dealer = _dealerProvider.Dealer;
-			var avitar = new AvitarDto()
+			if (string.IsNullOrEmpty(gameId))
 			{
-				Id = playerId,
-				UserName = "Me",
-				EmailAddress = "something@gmail.com"
-			};
-			var player = new BlackJackPlayer(avitar, _handIdProvider, numberOfHands);
-			
-			var gameId = _gameIdProvider.GenerateGameId();
-			var game = new BlackJackGame(gameId, _cardProvider, dealer, numberOfPlayers);
+				throw new ArgumentNullException(nameof(gameId));
+			}
 
-			player.Status = PlayerStatusTypes.Ready;
+			var game = _gameRepo.ReadAsync(gameId);
 
-			game.AddPlayer(player);
+			game.Players.Single(x => x.Identifier == playerId).Status = PlayerStatusTypes.Ready;
+
+			//TODO: Should Check current player before dealing.
+			//TODO: Should Check all players ready.
+
 			game.Deal();
 			game.Status = GameStatus.InProgress;
 			
-			_gameRepo.CreateAsync(game);
+			_gameRepo.UpdateAsync(game.Id, game);
 
-			return game.ToDto(playerId);
+			return game.ToModel(playerId);
 		}
 
 		[HttpGet]
@@ -87,21 +86,31 @@ namespace BlackJackController.Controllers
 
 			_gameRepo.UpdateAsync(gameId, game);
 
-			return game.ToDto(playerId);
+			return game.ToModel(playerId);
 		}
 
-		//[HttpPost]
-		//public string JoinGame()
-		//{
-		//	var joinGameResponse = GetResponse<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>(
-		//		new JoinGameInteractor.RequestModel()
-		//	{
-		//		PlayerId = id,
-		//		MaxPlayers = maxPlayers
-		//	});
-		//	gameIdentifier = joinGameResponse.GameIdentifier;
-		//	return "1234-4567-7890";
-		//}
+		[HttpGet]
+		[Route("JoinGame")]
+		public BlackJackGameModel JoinGame(string playerId, int numberOfPlayers = 1, int numberOfHands = 1)
+		{
+			var game = _gameRepo.FindOpenGame(GameStatus.Waiting, numberOfPlayers);
+
+			var avitar = new AvitarDto()
+			{
+				Id = playerId,
+				UserName = "Me",
+				EmailAddress = "something@gmail.com"
+			};
+			var player = new BlackJackPlayer(avitar, _handIdProvider, numberOfHands);
+
+			//TODO: The reay will need to be after some sort of polling
+			game.Status = GameStatus.Ready;
+			game.AddPlayer(player);
+
+			_gameRepo.UpdateAsync(game.Id, game);
+
+			return game.ToModel(playerId);
+		}
 
 		//private BlackJackGameDto currentGame = new BlackJackGameDto()
 		//{

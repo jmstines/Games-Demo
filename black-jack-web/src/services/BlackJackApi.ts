@@ -8,17 +8,33 @@ export class BlackJackApi {
     withCredentials: false
   });
 
-  public async BeginGame(
+  public async JoinGame(
     playerId: string,
     numberOfPlayers = 1,
     handCount = 1
   ): Promise<IGame> {
     return await this.axiosInstance
-      .get("BeginGame", {
+      .get("JoinGame", {
         params: {
           playerId: playerId,
           numberOfPlayers: numberOfPlayers,
           numberOfHands: handCount
+        }
+      })
+      .then(response => {
+        return (response.data as unknown) as IGame;
+      });
+  }
+
+  public async BeginGame(
+    gameId: string,
+    playerId: string
+  ): Promise<IGame> {
+    return await this.axiosInstance
+      .get("BeginGame", {
+        params: {
+          gameId: gameId,
+          playerId: playerId
         }
       })
       .then(response => {

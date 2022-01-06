@@ -11,7 +11,10 @@
       </v-row>
       <v-row>
         <v-col class="d-flex justify-center">
-          <v-btn elevation="2" x-large v-if="gameWaiting" v-on:click="beginGame"
+          <v-btn elevation="2" x-large v-if="gameWaiting" v-on:click="joinGame"
+            >Find Game</v-btn
+          >
+          <v-btn elevation="2" x-large v-if="gameReady" v-on:click="beginGame"
             >Start Game</v-btn
           >
         </v-col>
@@ -58,17 +61,26 @@ export default Vue.extend({
     gameWaiting(): boolean {
       return this.game.status === GameStatus.Waiting;
     },
+    gameReady(): boolean {
+      return this.game.status === GameStatus.Ready;
+    },
     applicationTitle(): string {
       const env = process.env.VUE_APP_ENV;
       return `BlackJack Game ${env}`;
     }
   },
   methods: {
-    async beginGame(): Promise<void> {
-      this.game = await api.BeginGame(
+    async joinGame(): Promise<void> {
+      this.game = await api.JoinGame(
         "416f159f-0d56-49ea-a3ef-64e98cc13a06",
         1,
         1
+      );
+    },    
+    async beginGame(): Promise<void> {
+      this.game = await api.BeginGame(
+        this.game.id,
+        this.game.currentPlayerId
       );
     },
     async playerAction(

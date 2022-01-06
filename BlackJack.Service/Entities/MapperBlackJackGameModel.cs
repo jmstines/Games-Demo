@@ -11,7 +11,7 @@ namespace Entities
 	{
 		private const string CardBackName = "card_back_blue";
 		public static BlackJackGameModel
-			ToDto(this BlackJackGame game, string playerId)
+			ToModel(this BlackJackGame game, string playerId)
 		{
 			_ = game ?? throw new ArgumentNullException(nameof(game));
 			var dto = new BlackJackGameModel

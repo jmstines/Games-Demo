@@ -53,26 +53,20 @@ namespace Interactors
 
 			var currentPlayer = new BlackJackPlayer(avitar, HandIdProvider, requestModel.HandCount);
 
-			var keyAndGame = GameRepository.FindByStatusFirstOrDefault(GameStatus.Waiting, requestModel.MaxPlayers);
+			var game = GameRepository.FindOpenGame(GameStatus.Waiting, requestModel.MaxPlayers);
 
 			string gameIdentifier;
-			BlackJackGame game;
-			if (string.IsNullOrEmpty(keyAndGame.Key))
+			if (game == null)
 			{
 				gameIdentifier = GameIdProviders.GenerateGameId();
 				game = new BlackJackGame(gameIdentifier, CardProvider, DealerProvider.Dealer, requestModel.MaxPlayers);
 			}
-			else
-			{
-				gameIdentifier = keyAndGame.Key;
-				game = keyAndGame.Value;
-			}
 			
 			game.AddPlayer(currentPlayer);
 
-			GameRepository.UpdateAsync(gameIdentifier, game);
+			GameRepository.UpdateAsync(game.Id, game);
 
-			outputBoundary.HandleResponse(new ResponseModel() { GameIdentifier = gameIdentifier });
+			outputBoundary.HandleResponse(new ResponseModel() { GameIdentifier = game.Id });
 		}
 	}
 }
