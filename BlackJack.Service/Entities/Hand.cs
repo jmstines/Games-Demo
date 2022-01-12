@@ -8,6 +8,7 @@ namespace Entities
 {
 	public class Hand
 	{
+		private const int maxCardCount = 5;
 		private readonly List<BlackJackCard> cards = new List<BlackJackCard>();
 		private List<HandActionTypes> actions;
 
@@ -26,7 +27,7 @@ namespace Entities
 		public void AddCard(ICard card)
 		{
 			_ = card ?? throw new ArgumentNullException(nameof(card));
-			if (Actions.Contains(HandActionTypes.Hit) == false)
+			if (Actions.Contains(HandActionTypes.Hit) == false && cards.Count() > 2)
 			{
 				throw new InvalidOperationException("Drawing A card is not a valid Action on this Hand.");
 			}
@@ -69,15 +70,32 @@ namespace Entities
 			return splitCards;
 		}
 
-		private void SetStatus(HandStatusTypes status) => Status = BustHand() ?
-			HandStatusTypes.Bust : status;
+		private void SetStatus(HandStatusTypes status)
+		{
+			if(BustHand())
+			{
+				Status = HandStatusTypes.Bust;
+			} 
+			else if(cards.Count() == maxCardCount || PointValue == BlackJackConstants.BlackJack)
+			{
+				Status = HandStatusTypes.BlackJack;
+			}
+			else
+			{
+				Status = status;
+			}
+		}
 
 		private void SetHandActions()
 		{
 			actions = new List<HandActionTypes>();
-			if (Status == HandStatusTypes.Hold || PointValue >= BlackJackConstants.BlackJack)
+
+			if (cards.Any() == false
+				|| cards.Count >= maxCardCount
+				|| Status == HandStatusTypes.Hold
+				|| PointValue >= BlackJackConstants.BlackJack)
 			{
-				actions.Add(HandActionTypes.Pass);
+				return;
 			}
 			else
 			{

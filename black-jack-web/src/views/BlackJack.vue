@@ -94,20 +94,10 @@ export default Vue.extend({
           break;
         case Actions.Hold:
           console.error("Action Type Not Implemented.");
-          // this.players[1].hands[0].actions = this.players[1].hands[0].actions.filter(
-          //   action => {
-          //     return (
-          //       action !== Actions.Hit &&
-          //       action !== Actions.Hold &&
-          //       action !== Actions.Split
-          //     );
-          //   }
-          // );
+          this.game = await api.Hold(this.game.id, playerId, handId);
           break;
         case Actions.Split:
-          console.error("Action Type Not Implemented.");
-          // this.players[1].hands[0].cards = [this.players[1].hands[0].cards[0]];
-          // this.players[1].hands.push(this.players[1].hands[0]);
+          this.game = await api.Split(this.game.id, playerId, handId);
           break;
         default:
           throw new Error("Action Type Not found.");

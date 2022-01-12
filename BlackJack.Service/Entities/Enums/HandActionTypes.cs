@@ -4,7 +4,6 @@
 	{
 		Hold = 1,
 		Hit,
-		Split,
-		Pass
+		Split
 	}
 }

@@ -27,7 +27,8 @@ namespace Entities
 				BlackJackPlayerModel playerDto;
 				if (game.Status != Enums.GameStatus.Complete)
 				{
-					var isCurrentPlayer = player.Identifier.Equals(playerId);
+					var isCurrentPlayer = player.Identifier.Equals(playerId)
+						|| player.Status == PlayerStatusTypes.Complete;
 					playerDto = MapPlayer(player, isCurrentPlayer);
 				}
 				else

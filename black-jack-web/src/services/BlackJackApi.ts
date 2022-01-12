@@ -59,4 +59,40 @@ export class BlackJackApi {
         return (response.data as unknown) as IGame;
       });
   }
+
+  public async Hold(
+    gameid: string,
+    playerId: string,
+    handId: string
+  ): Promise<IGame> {
+    return await this.axiosInstance
+      .get("Hold", {
+        params: {
+          gameId: gameid,
+          playerId: playerId,
+          handId: handId
+        }
+      })
+      .then(response => {
+        return (response.data as unknown) as IGame;
+      });
+  }
+
+  public async Split(
+    gameid: string,
+    playerId: string,
+    handId: string
+  ): Promise<IGame> {
+    return await this.axiosInstance
+      .get("Split", {
+        params: {
+          gameId: gameid,
+          playerId: playerId,
+          handId: handId
+        }
+      })
+      .then(response => {
+        return (response.data as unknown) as IGame;
+      });
+  }
 }

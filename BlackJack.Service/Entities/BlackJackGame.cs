@@ -69,6 +69,12 @@ namespace Entities
 			player.Hold(handIdentifier);
 
 			UpdateCurrentPlayer(player);
+
+			if (CurrentPlayer == Dealer)
+			{
+				DealersTurn();
+			}
+
 			SetGameCompleteOnAllPlayersComplete();
 		}
 
@@ -83,6 +89,16 @@ namespace Entities
 
 			var player = GetPlayerById(playerIdentifier);
 			player.AddCard(handIdentifier, _cardProvider.Cards(1).Single());
+
+			if(player.Status == PlayerStatusTypes.Complete)
+			{
+				UpdateCurrentPlayer(player);
+			}
+
+			if(CurrentPlayer == Dealer)
+			{
+				DealersTurn();
+			}
 
 			SetGameCompleteOnAllPlayersComplete();
 		}
@@ -100,6 +116,22 @@ namespace Entities
 			_players.ForEach(p => p.DealHands(cards.Take(p.Hands.Count() * 2)));
 			
 			Status = GameStatus.InProgress;
+		}
+
+		private void DealersTurn()
+		{
+			foreach (var hand in Dealer.Hands)
+			{
+				while (hand.PointValue < 17 && hand.Cards.Count() <= 5)
+				{
+					Dealer.AddCard(hand.Identifier, _cardProvider.Cards(1).Single());
+				}
+
+				if (hand.Status != HandStatusTypes.Bust)
+				{
+					Dealer.Hold(hand.Identifier);
+				}
+			}
 		}
 
 		private BlackJackPlayer GetPlayerById(string id)

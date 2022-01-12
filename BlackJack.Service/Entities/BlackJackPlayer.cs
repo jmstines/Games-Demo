@@ -44,6 +44,7 @@ namespace Entities
 
 			hands.ForEach(h => h.AddCardRange(cards.Take(2)));
 			Status = PlayerStatusTypes.InProgress;
+			CheckForPlayerEndOfTurn();
 		}
 
 		public void AddCard(string handIdentifier, ICard card)
