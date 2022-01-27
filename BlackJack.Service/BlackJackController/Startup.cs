@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BlackJackController.Data;
 using Entities;
 using Entities.Interfaces;
@@ -11,14 +7,10 @@ using Interactors.Providers;
 using Interactors.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using static Interactors.BeginGameInteractor;
-using static Interactors.JoinGameInteractor;
+using Interactors;
 
 namespace BlackJackController
 {
@@ -37,20 +29,29 @@ namespace BlackJackController
 		{
 			services.AddControllers();
 
-			services.AddScoped<IPlayerRepository, InMemoryPlayerRepository>();
-			services.AddSingleton<IGameRepository, InMemoryGameRepo>();
-			services.AddSingleton<IGameIdentifierProvider, GuidBasedGameIdentifierProvider>();
-			services.AddSingleton<IDealerProvider, DealerProvider>();
-			services.AddSingleton<IRandomProvider, RandomProvider>();
-			services.AddSingleton<IHandIdentifierProvider, GuidBasedHandIdentifierProvider>();
-			services.AddSingleton<ICardProvider, CardProvider>();
-			services.AddSingleton<Deck, Deck>();
-			services.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>();
-			services.AddSingleton<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>();
-			//services.AddSingleton<IGameRepository, InMemoryGameRepo>();
+			services.AddScoped<IPlayerRepository, InMemoryPlayerRepository>()
+				.AddSingleton<IGameRepository, InMemoryGameRepo>()
+				.AddSingleton<IGameIdentifierProvider, GuidBasedGameIdentifierProvider>()
+				.AddSingleton<IDealerProvider, DealerProvider>()
+				.AddSingleton<IRandomProvider, RandomProvider>()
+				.AddSingleton<IHandIdentifierProvider, GuidBasedHandIdentifierProvider>()
+				.AddSingleton<ICardProvider, CardProvider>()
+				.AddSingleton<Deck, Deck>()
+				.AddScoped<IPlayerIdentifierProvider, GuidBasedPlayerIdentifierProvider>()
+				.AddSingleton<IAvitarIdentifierProvider, GuidBasedAvitarIdentifierProvider>()
 
-			//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
-			//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
+				.AddScoped<IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>, JoinGameInteractor>()
+				.AddScoped<IInteractorBoundary<BeginGameInteractor.RequestModel, BeginGameInteractor.ResponseModel>, BeginGameInteractor>()
+				.AddScoped<IInteractorBoundary<HitInteractor.RequestModel, HitInteractor.ResponseModel>, HitInteractor>()
+				.AddScoped<IInteractorBoundary<HoldInteractor.RequestModel, HoldInteractor.ResponseModel>, HoldInteractor>()
+				.AddScoped<IInteractorBoundary<SplitInteractor.RequestModel, SplitInteractor.ResponseModel>, SplitInteractor>()
+
+				//services.AddSingleton<IGameRepository, InMemoryGameRepo>();
+
+				//services.AddSingleton(typeof(IOutputBoundary<>), typeof(IOutputBoundary<>).Assembly);
+				//services.AddSingleton(typeof(IInputBoundary<,>), typeof(IInputBoundary<,>).Assembly);
+				//.AddSingleton(typeof(IInteractorBoundary<,>), typeof(IInteractorBoundary<,>).Assembly);
+				;
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

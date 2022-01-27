@@ -107,7 +107,8 @@ namespace Entities
 		{
 			if (Status != GameStatus.Ready)
 			{
-				throw new ArgumentOutOfRangeException(nameof(Status), "Game Status Must be Ready to Deal Hands.");
+				throw new ArgumentOutOfRangeException(nameof(Status),
+					"Game Status Must be Ready to Deal Hands.");
 			}
 
 			var cardCount = _players.Sum(p => p.Hands.Count());

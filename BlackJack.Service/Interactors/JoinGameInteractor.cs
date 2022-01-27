@@ -1,72 +1,69 @@
 ﻿using Entities;
 using Entities.Enums;
 using Entities.Interfaces;
+using Entities.RepositoryDto;
+using Entities.ResponceDto;
 using Interactors.Boundaries;
 using Interactors.Repositories;
 using System;
 
 namespace Interactors
 {
-	public class JoinGameInteractor : IInputBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>
+	public class JoinGameInteractor : IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>
 	{
 		public class RequestModel
 		{
 			public string PlayerId { get; set; }
-			public int MaxPlayers { get; set; }
-			public int HandCount { get; set; }
+			public int? MaxPlayers { get; set; }
+			public int? HandCount { get; set; }
 		}
 
 		public class ResponseModel
 		{
-			public string GameIdentifier { get; set; }
+			public BlackJackGameModel Game { get; set; }
 		}
 
 		private readonly IGameRepository GameRepository;
-		private readonly IGameIdentifierProvider GameIdProviders;
 		private readonly IHandIdentifierProvider HandIdProvider;
-		private readonly IAvitarRepository AvitarRepository;
-		private readonly IDealerProvider DealerProvider;
-		private readonly ICardProvider CardProvider;
 
 		public JoinGameInteractor(
 			IGameRepository gameRepository, 
-			IAvitarRepository avitarRepository, 
-			IDealerProvider dealerProvider,
-			IGameIdentifierProvider gameIdProviders,
-			IHandIdentifierProvider handIdProvider,
-			ICardProvider cardProvider
+			IHandIdentifierProvider handIdProvider
 			)
 		{
 			GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
-			GameIdProviders = gameIdProviders ?? throw new ArgumentNullException(nameof(gameIdProviders));
 			HandIdProvider = handIdProvider ?? throw new ArgumentNullException(nameof(handIdProvider));
-			AvitarRepository = avitarRepository ?? throw new ArgumentNullException(nameof(avitarRepository));
-			DealerProvider = dealerProvider ?? throw new ArgumentNullException(nameof(dealerProvider));
-			CardProvider = cardProvider ?? throw new ArgumentNullException(nameof(cardProvider));
 		}
 
-		public void HandleRequestAsync(RequestModel requestModel, IOutputBoundary<ResponseModel> outputBoundary)
+		public void HandleRequestAsync(RequestModel requestModel, out ResponseModel responseModel)
 		{
-			_ = requestModel?.PlayerId ?? throw new ArgumentNullException(nameof(requestModel.PlayerId));
+			var maxPlayers = MaxPlayersOrDefault(requestModel.HandCount);
+			var game = GameRepository.FindOpenGame(GameStatus.Waiting, maxPlayers);
 
-			var avitar = AvitarRepository.ReadAsync(requestModel.PlayerId);
-
-			var currentPlayer = new BlackJackPlayer(avitar, HandIdProvider, requestModel.HandCount);
-
-			var game = GameRepository.FindOpenGame(GameStatus.Waiting, requestModel.MaxPlayers);
-
-			string gameIdentifier;
-			if (game == null)
+			var avitar = new AvitarDto()
 			{
-				gameIdentifier = GameIdProviders.GenerateGameId();
-				game = new BlackJackGame(gameIdentifier, CardProvider, DealerProvider.Dealer, requestModel.MaxPlayers);
-			}
-			
-			game.AddPlayer(currentPlayer);
+				Id = requestModel.PlayerId,
+				UserName = "Me",
+				EmailAddress = "something@gmail.com"
+			};
+
+			var handCount = HandCountOrDefault(requestModel.HandCount);
+
+			var player = new BlackJackPlayer(avitar, HandIdProvider, handCount);
+
+			//TODO: The reay will need to be after some sort of polling
+			game.Status = GameStatus.Ready;
+			game.AddPlayer(player);
 
 			GameRepository.UpdateAsync(game.Id, game);
 
-			outputBoundary.HandleResponse(new ResponseModel() { GameIdentifier = game.Id });
+			var gameModel = game.ToModel(game.CurrentPlayer.Identifier);
+
+			responseModel = new ResponseModel() { Game = gameModel };
 		}
+
+		private int HandCountOrDefault(int? handCount) => handCount ?? 1;
+
+		private int MaxPlayersOrDefault(int? maxPlayers) => maxPlayers ?? 1;
 	}
 }

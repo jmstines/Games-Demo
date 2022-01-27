@@ -1,15 +1,8 @@
-﻿using System;
-using System.Text.Json;
-using System.Collections.Generic;
-using Entities;
-using Entities.Enums;
-using Entities.Interfaces;
-using Entities.ResponceDto;
+﻿using Entities.ResponceDto;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Linq;
-using Entities.RepositoryDto;
-using Interactors.Repositories;
+using Interactors;
+using Interactors.Boundaries;
 
 namespace BlackJackController.Controllers
 {
@@ -18,22 +11,45 @@ namespace BlackJackController.Controllers
 	public class BlackJackGameController : ControllerBase
 	{
 		private readonly ILogger<BlackJackGameController> _logger;
-		private readonly IGameRepository _gameRepo;
-		private readonly IHandIdentifierProvider _handIdProvider;
-		
+
+		private readonly IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel> _joinGameInteractor;
+		private readonly IInteractorBoundary<BeginGameInteractor.RequestModel, BeginGameInteractor.ResponseModel> _beginGameInteractor;
+		private readonly IInteractorBoundary<HitInteractor.RequestModel, HitInteractor.ResponseModel> _hitInteractor;
+		private readonly IInteractorBoundary<HoldInteractor.RequestModel, HoldInteractor.ResponseModel> _holdInteractor;
+		private readonly IInteractorBoundary<SplitInteractor.RequestModel, SplitInteractor.ResponseModel> _splitInteractor;
 
 		public BlackJackGameController(
 			ILogger<BlackJackGameController> logger,
-			IGameRepository gameRepository,
-			IHandIdentifierProvider handIdProvider
+			IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel> joinGameInteractor,
+			IInteractorBoundary<BeginGameInteractor.RequestModel, BeginGameInteractor.ResponseModel> beginGameInteractor,
+			IInteractorBoundary<HitInteractor.RequestModel, HitInteractor.ResponseModel> hitInteractor,
+			IInteractorBoundary<HoldInteractor.RequestModel, HoldInteractor.ResponseModel> holdInteractor,
+			IInteractorBoundary<SplitInteractor.RequestModel, SplitInteractor.ResponseModel> splitInteractor
 			)
 		{
 			_logger = logger;
-			_gameRepo = gameRepository;
-			_handIdProvider = handIdProvider;
-		}
+			_joinGameInteractor = joinGameInteractor;
+			_beginGameInteractor = beginGameInteractor;
+			_hitInteractor = hitInteractor;
+			_holdInteractor = holdInteractor;
+			_splitInteractor = splitInteractor;
+		}		
 
-		//TODO need to move logic to game class
+		[HttpGet]
+		[Route("JoinGame")]
+		public BlackJackGameModel JoinGame(string playerId, int? numberOfPlayers, int? numberOfHands)
+		{
+			var requestModel = new JoinGameInteractor.RequestModel
+			{
+				PlayerId = playerId,
+				MaxPlayers = numberOfPlayers,
+				HandCount = numberOfHands
+			};
+
+			_joinGameInteractor.HandleRequestAsync(requestModel, out JoinGameInteractor.ResponseModel response);
+
+			return response.Game;
+		}
 
 		//https://localhost:44370/blackJackGame/BeginGame?playerId=%228f4f9270-0f14-45b7-83cd-4262aa8f89d0%22
 		[HttpGet]
@@ -42,94 +58,75 @@ namespace BlackJackController.Controllers
 		{
 			if (string.IsNullOrEmpty(playerId))
 			{
-				throw new ArgumentNullException(nameof(playerId));
+				_logger.LogError($"{nameof(playerId)} can not be null.");
+				// TODO: Handle Gracefully;
+				return null;
 			}
 
 			if (string.IsNullOrEmpty(gameId))
 			{
-				throw new ArgumentNullException(nameof(gameId));
+				_logger.LogError($"{nameof(gameId)} can not be null.");
+				// TODO: Handle Gracefully;
+				return null;
 			}
 
-			var game = _gameRepo.ReadAsync(gameId);
+			var requestModel = new BeginGameInteractor.RequestModel
+			{
+				GameId = gameId,
+				PlayerId = playerId
+			};
 
-			game.Players.Single(x => x.Identifier == playerId).Status = PlayerStatusTypes.Ready;
+			_beginGameInteractor.HandleRequestAsync(requestModel, out BeginGameInteractor.ResponseModel response);
 
-			//TODO: Should Check current player before dealing.
-			//TODO: Should Check all players ready.
-
-			game.Deal();
-			game.Status = GameStatus.InProgress;
-			
-			_gameRepo.UpdateAsync(game.Id, game);
-
-			return game.ToModel(game.CurrentPlayer.Identifier);
+			return response.Game;
 		}
 
 		[HttpGet]
 		[Route("Hit")]
 		public BlackJackGameModel Hit(string gameId, string playerId, string  handId)
 		{
-			//TODO on error return current game with error message
-			var game = _gameRepo.ReadAsync(gameId);
+			var requestModel = new HitInteractor.RequestModel
+			{
+				GameId = gameId,
+				PlayerId = playerId,
+				HandId = handId
+			};
 
-			game.PlayerHits(playerId, handId);
+			_hitInteractor.HandleRequestAsync(requestModel, out HitInteractor.ResponseModel response);
 
-			_gameRepo.UpdateAsync(gameId, game);
-
-			return game.ToModel(game.CurrentPlayer.Identifier);
+			return response.Game;
 		}
 
 		[HttpGet]
 		[Route("Hold")]
 		public BlackJackGameModel Hold(string gameId, string playerId, string handId)
 		{
-			//TODO on error return current game with error message
-			var game = _gameRepo.ReadAsync(gameId);
+			var requestModel = new HoldInteractor.RequestModel
+			{
+				GameId = gameId,
+				PlayerId = playerId,
+				HandId = handId
+			};
 
-			game.PlayerHolds(playerId, handId);
+			_holdInteractor.HandleRequestAsync(requestModel, out HoldInteractor.ResponseModel response);
 
-			_gameRepo.UpdateAsync(gameId, game);
-
-			return game.ToModel(game.CurrentPlayer.Identifier);
+			return response.Game;
 		}
 
 		[HttpGet]
 		[Route("Split")]
 		public BlackJackGameModel Split(string gameId, string playerId, string handId)
 		{
-			//TODO on error return current game with error message
-			var game = _gameRepo.ReadAsync(gameId);
-
-			game.PlayerHolds(playerId, handId);
-
-			_gameRepo.UpdateAsync(gameId, game);
-
-			return game.ToModel(game.CurrentPlayer.Identifier);
-		}
-
-		[HttpGet]
-		[Route("JoinGame")]
-		public BlackJackGameModel JoinGame(string playerId, int numberOfPlayers = 1, int numberOfHands = 1)
-		{
-			var game = _gameRepo.FindOpenGame(GameStatus.Waiting, numberOfPlayers);
-
-			var avitar = new AvitarDto()
+			var requestModel = new SplitInteractor.RequestModel
 			{
-				Id = playerId,
-				UserName = "Me",
-				EmailAddress = "something@gmail.com"
+				GameId = gameId,
+				PlayerId = playerId,
+				HandId = handId
 			};
-			var player = new BlackJackPlayer(avitar, _handIdProvider, numberOfHands);
 
-			//TODO: The reay will need to be after some sort of polling
-			game.Status = GameStatus.Ready;
-			game.AddPlayer(player);
+			_splitInteractor.HandleRequestAsync(requestModel, out SplitInteractor.ResponseModel response);
 
-			_gameRepo.UpdateAsync(game.Id, game);
-
-			return game.ToModel(playerId);
+			return response.Game;
 		}
-
-		
 	}
 }
