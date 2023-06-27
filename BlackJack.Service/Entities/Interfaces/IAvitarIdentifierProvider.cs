@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface IAvitarIdentifierProvider
 {
-	public interface IAvitarIdentifierProvider
-	{
-		string GenerateAvitar();
-	}
+	string GenerateAvitar();
 }

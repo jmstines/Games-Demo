@@ -1,14 +1,12 @@
 ﻿using Entities.Enums;
-using System;
 using System.Collections.Generic;
 
-namespace Entities.ResponceDto
+namespace Entities.ResponceModel;
+
+public class BlackJackGameModel
 {
-	public class BlackJackGameModel
-	{
-		public List<BlackJackPlayerModel> Players { get; set; }
-		public string CurrentPlayerId { get; set; }
-		public GameStatus Status { get; set; }
-		public string Id { get; set; }
-	}
+    public List<BlackJackPlayerModel>? Players { get; set; }
+    public string? CurrentPlayerId { get; set; }
+    public GameStatus Status { get; set; }
+    public string? Id { get; init; }
 }

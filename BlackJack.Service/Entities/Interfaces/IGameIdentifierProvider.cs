@@ -1,7 +1,6 @@
-﻿namespace Entities.Interfaces
+﻿namespace Entities.Interfaces;
+
+public interface IGameIdentifierProvider
 {
-	public interface IGameIdentifierProvider
-	{
-		string GenerateGameId();
-	}
+    string GenerateGameId();
 }

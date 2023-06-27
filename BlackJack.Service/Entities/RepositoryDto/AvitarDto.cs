@@ -1,10 +1,8 @@
-﻿namespace Entities.RepositoryDto
+﻿namespace Entities.RepositoryDto;
+
+public record AvitarDto
 {
-	public class AvitarDto
-	{
-		
-		public string Id { get; set; }
-		public string UserName { get; set; }
-		public string EmailAddress { get; set; }
-	}
+    public string? Id { get; set; }
+    public string? UserName { get; set; }
+    public string? EmailAddress { get; set; }
 }

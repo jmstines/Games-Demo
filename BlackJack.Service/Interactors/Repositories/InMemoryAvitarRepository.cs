@@ -3,25 +3,24 @@ using Entities.RepositoryDto;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Interactors.Repositories
+namespace Interactors.Repositories;
+
+public class InMemoryAvitarRepository : IAvitarRepository
 {
-	public class InMemoryAvitarRepository : IAvitarRepository
+	private readonly Dictionary<string, AvitarDto> Avitars;
+
+	public InMemoryAvitarRepository()
 	{
-		private readonly Dictionary<string, AvitarDto> Avitars;
+		Avitars = new Dictionary<string, AvitarDto>();
+	}
 
-		public InMemoryAvitarRepository()
-		{
-			Avitars = new Dictionary<string, AvitarDto>();
-		}
+	public void CreateAsync(AvitarDto player) => Avitars.Add(player.Id, player);
 
-		public void CreateAsync(AvitarDto player) => Avitars.Add(player.Id, player);
+	public AvitarDto ReadAsync(string identifier) => Avitars.Single(g => g.Key.Equals(identifier)).Value;
 
-		public AvitarDto ReadAsync(string identifier) => Avitars.Single(g => g.Key.Equals(identifier)).Value;
-
-		public void UpdateAsync(string identifier, AvitarDto player)
-		{
-			Avitars.Remove(identifier);
-			Avitars.Add(identifier, player);
-		}
+	public void UpdateAsync(string identifier, AvitarDto player)
+	{
+		Avitars.Remove(identifier);
+		Avitars.Add(identifier, player);
 	}
 }

@@ -1,19 +1,18 @@
-﻿namespace Entities.Enums
+﻿namespace Entities.Enums;
+
+public enum CardRank
 {
-	public enum CardRank
-	{
-		Two = 1,
-		Three,
-		Four,
-		Five,
-		Six,
-		Seven,
-		Eight,
-		Nine,
-		Ten,
-		Jack,
-		Queen,
-		King,
-		Ace
-	}
+	Two = 1,
+	Three,
+	Four,
+	Five,
+	Six,
+	Seven,
+	Eight,
+	Nine,
+	Ten,
+	Jack,
+	Queen,
+	King,
+	Ace
 }

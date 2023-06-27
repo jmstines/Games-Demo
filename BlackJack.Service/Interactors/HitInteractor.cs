@@ -1,43 +1,67 @@
 ﻿using Interactors.Boundaries;
 using Interactors.Repositories;
-using Entities.ResponceDto;
 using System;
 using Entities;
+using Entities.ResponceModel;
+using System.Threading.Tasks;
+using Entities.Interfaces;
 
-namespace Interactors
+namespace Interactors;
+
+public class HitInteractor : IInteractorBoundary<HitInteractor.RequestModel, HitInteractor.ResponseModel>
 {
-	public class HitInteractor : IInteractorBoundary<HitInteractor.RequestModel, HitInteractor.ResponseModel>
-	{
-		public class RequestModel
-		{
-			public string GameId { get; set; }
-			public string PlayerId { get; set; }
-			public string HandId { get; set; }
-		}
+    public record RequestModel
+    {
+        public string GameId { get; set; }
+        public string PlayerId { get; set; }
+        public string HandId { get; set; }
+    }
 
-		public class ResponseModel
-		{
-			public BlackJackGameModel Game { get; set; }
-		}
+    public record ResponseModel
+    {
+        public BlackJackGameModel Game { get; set; }
+    }
 
-		private readonly IGameRepository GameRepository;
+    private readonly IGameRepository GameRepository;
+    private readonly IHitAction HitAction;
 
-		public HitInteractor(IGameRepository gameRepository)
-		{
-			GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
-		}
+    public HitInteractor(IGameRepository gameRepository, IHitAction hitAction)
+    {
+        GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+        HitAction = hitAction ?? throw new ArgumentNullException(nameof(hitAction));
+    }
 
-		public void HandleRequestAsync(RequestModel requestModel, out ResponseModel responseModel)
-		{
-			var game = GameRepository.ReadAsync(requestModel.GameId);
+    public async Task HandleRequestAsync(RequestModel requestModel, ResponseModel responseModel)
+    {
+        var game = await GameRepository.ReadAsync(requestModel.GameId);
 
-			game.PlayerHits(requestModel.PlayerId, requestModel.HandId);
+        if (game == null)
+        {
+            return;
+        }
 
-			GameRepository.UpdateAsync(requestModel.GameId, game);
+        if (game.CurrentPlayer != requestModel.PlayerId)
+        {
+            var name = game.Players[requestModel.PlayerId].Name;
+            throw new ArgumentException(nameof(requestModel.PlayerId), $"Please wait your turn, Current player is {name}");
+        }
 
-			var gameModel = game.ToModel(game.CurrentPlayer.Identifier);
+        if (game.Players.TryGetValue(requestModel.PlayerId, out var player) == false)
+        {
+            throw new ArgumentException($"Player with id {requestModel.PlayerId} not found.");
+        }
 
-			responseModel = new ResponseModel() { Game = gameModel };
-		}
-	}
+        if (player.Hands.TryGetValue(requestModel.HandId, out var hand) == false)
+        {
+            throw new ArgumentException($"Hand with id {requestModel.HandId} not found.");
+        }
+
+        HitAction.PlayerHits(game, player, hand);
+
+        await GameRepository.UpdateAsync(requestModel.GameId, game);
+
+        var gameModel = game.ToModel(game.CurrentPlayer);
+
+        responseModel = new ResponseModel() { Game = gameModel };
+    }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface ICardDeckProvider
 {
-	public interface ICardDeckProvider
-	{
-		IEnumerable<ICard> Deck { get; }
-	}
+    IEnumerable<ICard> Deck { get; }
 }

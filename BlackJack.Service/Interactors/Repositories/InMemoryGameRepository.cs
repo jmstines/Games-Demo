@@ -1,65 +1,60 @@
 ﻿using Entities;
 using Entities.Enums;
 using Entities.Interfaces;
-using Interactors.Repositories;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-namespace BlackJackController.Data
+namespace Interactors.Repositories;
+
+public class InMemoryGameRepo : IGameRepository
 {
-	public class InMemoryGameRepo : IGameRepository
-	{
-		private readonly Dictionary<string, BlackJackGame> games = new Dictionary<string, BlackJackGame>();
+    private readonly Dictionary<string, BlackJackGame> games = new();
 
-		private readonly IGameIdentifierProvider _gameIdProvider;
-		private readonly ICardProvider _cardProvider;
-		private readonly IDealerProvider _dealerProvider;
+    private readonly IGameIdentifierProvider _gameIdProvider;
+    private readonly IDealerProvider _dealerProvider;
 
-		public InMemoryGameRepo(
-			IGameIdentifierProvider gameIdProvider,
-			ICardProvider cardProvider,
-			IDealerProvider dealerProvider
-			)
-		{
-			_gameIdProvider = gameIdProvider;
-			_cardProvider = cardProvider;
-			_dealerProvider = dealerProvider;
-		}
+    public InMemoryGameRepo(
+        IGameIdentifierProvider gameIdProvider,
+        IDealerProvider dealerProvider
+        )
+    {
+        _gameIdProvider = gameIdProvider;
+        _dealerProvider = dealerProvider;
+    }
 
-		public void CreateAsync(BlackJackGame game)
-		{
-			games.Add(game.Id, game);
-		}
+    public async Task CreateAsync(BlackJackGame game) => 
+        await Task.Run(() => games.Add(game.Id, game));
 
-		public BlackJackGame FindOpenGame(GameStatus status, int maxPlayers)
-		{
-			//TODO: This could use some work. aka not efficient
-			var gameRecord = games
-				.Where(x => x.Value.Status == status && x.Value.Players.Count() <= maxPlayers)
-				.Select(x => x.Value)
-				.FirstOrDefault();
+    public async Task<BlackJackGame> FindOpenGame(GameStatus status, int maxPlayers)
+    {
+        //TODO: This could use some work. aka not efficient
+        var gameRecord = games
+            .Where(x => x.Value.Status == status 
+                && x.Value.Players.Count <= maxPlayers)
+            .Select(x => x.Value)
+            .FirstOrDefault();
 
-			if (gameRecord != null)
-			{
-				return gameRecord;
-			}
-			var gameId = _gameIdProvider.GenerateGameId();
-			var dealer = _dealerProvider.Dealer;
+        if (gameRecord != null)
+        {
+            return gameRecord;
+        }
+        var gameId = _gameIdProvider.GenerateGameId();
+        var dealer = _dealerProvider.Dealer;
 
-			var game = new BlackJackGame(gameId, _cardProvider, dealer, maxPlayers);
-			games.Add(game.Id, game);
+        var game = new BlackJackGame()
+        {
+            Id = gameId,
+            MaxPlayerCount = maxPlayers
+        };
+        await Task.Run(() => games.Add(game.Id, game));
 
-			return game;
-		}
+        return game;
+    }
 
-		public BlackJackGame ReadAsync(string identifier)
-		{
-			return games[identifier];
-		}
+    public async Task<BlackJackGame> ReadAsync(string identifier) => 
+        await Task.Run(() => games[identifier]);
 
-		public void UpdateAsync(string identifier, BlackJackGame game)
-		{
-			games[identifier] = game;
-		}
-	}
+    public async Task UpdateAsync(string identifier, BlackJackGame game) => 
+        await Task.Run(() => games[identifier] = game);
 }

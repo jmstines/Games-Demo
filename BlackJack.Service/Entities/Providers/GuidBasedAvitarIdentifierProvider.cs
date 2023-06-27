@@ -1,9 +1,8 @@
 ﻿using Entities.Interfaces;
 
-namespace Interactors.Providers
+namespace Entities.Providers;
+
+public class GuidBasedAvitarIdentifierProvider : GuidBasedIdentiferProviderBase, IAvitarIdentifierProvider
 {
-	public class GuidBasedAvitarIdentifierProvider : GuidBasedIdentiferProviderBase, IAvitarIdentifierProvider
-	{
-		public string GenerateAvitar() => Generate(avitarIdentifierLength);
-	}
+    public string GenerateAvitar() => Generate(avitarIdentifierLength);
 }

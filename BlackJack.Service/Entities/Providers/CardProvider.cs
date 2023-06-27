@@ -2,19 +2,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Entities.Providers
+namespace Entities.Providers;
+
+public class CardProvider : CardProviderBase, ICardProvider
 {
-	public class CardProvider : CardProviderBase, ICardProvider
+	public IEnumerable<ICard> Cards(int count) => RandomCards(count);
+
+	public CardProvider(IRandomProvider randomProvider, Deck deck)
+		: base(randomProvider, deck)
 	{
-		public override IEnumerable<ICard> Deck { get; set; }
-		public override IRandomProvider RandomProvider { get; set; }
-
-		public IEnumerable<ICard> Cards(int count) => RandomCards(count);
-
-		public CardProvider(IRandomProvider randomProvider, Deck deck)
-		{
-			Deck = deck ?? throw new ArgumentNullException(nameof(deck));
-			RandomProvider = randomProvider ?? throw new ArgumentNullException(nameof(randomProvider));
-		}
+		Deck = deck ?? throw new ArgumentNullException(nameof(deck));
+		RandomProvider = randomProvider ?? throw new ArgumentNullException(nameof(randomProvider));
 	}
 }

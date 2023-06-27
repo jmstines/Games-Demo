@@ -1,10 +1,9 @@
-﻿namespace Entities.Enums
+﻿namespace Entities.Enums;
+
+public enum GameStatus
 {
-	public enum GameStatus
-	{
-		Waiting = 1,
-		Ready,
-		InProgress,
-		Complete
-	}
+	Waiting = 1,
+	Ready,
+	InProgress,
+	Complete
 }

@@ -1,8 +1,7 @@
-﻿namespace Entities.Interfaces
+﻿namespace Entities.Interfaces;
+
+public interface IBlackJackCard: ICard
 {
-	public interface IBlackJackCard: ICard
-	{
-		bool FaceDown { get; }
-		int Value { get; }
-	}
+	bool FaceDown { get; }
+	int Value { get; }
 }

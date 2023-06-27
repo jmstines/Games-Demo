@@ -1,10 +1,9 @@
 ﻿using Entities.Enums;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface ICard
 {
-	public interface ICard
-	{
-		CardSuit Suit { get; }
-		CardRank Rank { get; }
-	}
+	CardSuit Suit { get; }
+	CardRank Rank { get; }
 }

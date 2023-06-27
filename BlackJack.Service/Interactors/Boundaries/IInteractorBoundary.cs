@@ -1,7 +1,8 @@
-﻿namespace Interactors.Boundaries
+﻿using System.Threading.Tasks;
+
+namespace Interactors.Boundaries;
+
+public interface IInteractorBoundary<TRequestModel, TResponseModel>
 {
-	public interface IInteractorBoundary<TRequestModel, TResponseModel>
-	{
-		void HandleRequestAsync(TRequestModel requestModel, out TResponseModel responseModel);
-	}
+	Task HandleRequestAsync(TRequestModel requestModel, TResponseModel responseModel);
 }

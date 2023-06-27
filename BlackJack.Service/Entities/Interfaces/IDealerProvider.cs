@@ -1,7 +1,8 @@
-﻿namespace Entities.Interfaces
+﻿using System.Collections.Generic;
+
+namespace Entities.Interfaces;
+
+public interface IDealerProvider
 {
-	public interface IDealerProvider
-	{
-		BlackJackPlayer Dealer { get; }
-	}
+    KeyValuePair<string, IBlackJackPlayer> Dealer { get; }
 }

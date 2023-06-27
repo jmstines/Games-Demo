@@ -1,69 +1,64 @@
 ﻿using Entities;
 using Entities.Enums;
 using Entities.Interfaces;
-using Entities.RepositoryDto;
-using Entities.ResponceDto;
+using Entities.ResponceModel;
 using Interactors.Boundaries;
 using Interactors.Repositories;
 using System;
+using System.Threading.Tasks;
 
-namespace Interactors
+namespace Interactors;
+
+public class JoinGameInteractor : IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>
 {
-	public class JoinGameInteractor : IInteractorBoundary<JoinGameInteractor.RequestModel, JoinGameInteractor.ResponseModel>
-	{
-		public class RequestModel
-		{
-			public string PlayerId { get; set; }
-			public int? MaxPlayers { get; set; }
-			public int? HandCount { get; set; }
-		}
+    public record RequestModel
+    {
+        public string PlayerId { get; set; }
+        public int MaxPlayers { get; set; }
+        public int HandCount { get; set; }
+    }
 
-		public class ResponseModel
-		{
-			public BlackJackGameModel Game { get; set; }
-		}
+    public record ResponseModel
+    {
+        public BlackJackGameModel Game { get; set; }
+    }
 
-		private readonly IGameRepository GameRepository;
-		private readonly IHandIdentifierProvider HandIdProvider;
+    private readonly IGameRepository GameRepository;
+    private readonly IJoinGameAction JoinGameAction;
+    private readonly IAvitarRepository AvitarRepository;
 
-		public JoinGameInteractor(
-			IGameRepository gameRepository, 
-			IHandIdentifierProvider handIdProvider
-			)
-		{
-			GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
-			HandIdProvider = handIdProvider ?? throw new ArgumentNullException(nameof(handIdProvider));
-		}
+    public JoinGameInteractor(
+        IGameRepository gameRepository,
+        IJoinGameAction joinGameAction,
+        IAvitarRepository avitarRepository)
+    {
+        GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+        JoinGameAction = joinGameAction ?? throw new ArgumentNullException(nameof(joinGameAction));
+        AvitarRepository = avitarRepository ?? throw new ArgumentNullException(nameof(avitarRepository));
+    }
 
-		public void HandleRequestAsync(RequestModel requestModel, out ResponseModel responseModel)
-		{
-			var maxPlayers = MaxPlayersOrDefault(requestModel.HandCount);
-			var game = GameRepository.FindOpenGame(GameStatus.Waiting, maxPlayers);
+    public async Task HandleRequestAsync(RequestModel requestModel, ResponseModel responseModel)
+    {
+        var maxPlayers = MaxPlayersOrDefault(requestModel.HandCount);
+        var game = await GameRepository.FindOpenGame(GameStatus.Waiting, maxPlayers);
 
-			var avitar = new AvitarDto()
-			{
-				Id = requestModel.PlayerId,
-				UserName = "Me",
-				EmailAddress = "something@gmail.com"
-			};
+        // TODO: Make sure the playerid has bee validated.
+        // Might have already been validated at the controller
+        var player = AvitarRepository.ReadAsync(requestModel.PlayerId);
 
-			var handCount = HandCountOrDefault(requestModel.HandCount);
+        if (player is null)
+        {
+            throw new ArgumentException(nameof(requestModel.PlayerId));
+        }
 
-			var player = new BlackJackPlayer(avitar, HandIdProvider, handCount);
+        JoinGameAction.PlayerJoinsGame(game, player.UserName, requestModel.HandCount);
 
-			//TODO: The reay will need to be after some sort of polling
-			game.Status = GameStatus.Ready;
-			game.AddPlayer(player);
+        await GameRepository.UpdateAsync(game.Id, game);
 
-			GameRepository.UpdateAsync(game.Id, game);
+        var gameModel = game.ToModel(game.CurrentPlayer);
 
-			var gameModel = game.ToModel(game.CurrentPlayer.Identifier);
+        responseModel = new ResponseModel() { Game = gameModel };
+    }
 
-			responseModel = new ResponseModel() { Game = gameModel };
-		}
-
-		private int HandCountOrDefault(int? handCount) => handCount ?? 1;
-
-		private int MaxPlayersOrDefault(int? maxPlayers) => maxPlayers ?? 1;
-	}
+    private static int MaxPlayersOrDefault(int? maxPlayers) => maxPlayers ?? 1;
 }

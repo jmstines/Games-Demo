@@ -1,10 +1,9 @@
-﻿namespace Entities.Enums
+﻿namespace Entities.Enums;
+
+public enum CardSuit
 {
-	public enum CardSuit
-	{
-		Clubs = 1,
-		Diamonds,
-		Hearts,
-		Spades
-	}
+	Clubs = 1,
+	Diamonds,
+	Hearts,
+	Spades
 }

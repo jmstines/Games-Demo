@@ -1,9 +1,8 @@
 ﻿using Entities.Interfaces;
 
-namespace Interactors.Providers
+namespace Entities.Providers;
+
+public class GuidBasedGameIdentifierProvider : GuidBasedIdentiferProviderBase, IGameIdentifierProvider
 {
-	public class GuidBasedGameIdentifierProvider : GuidBasedIdentiferProviderBase, IGameIdentifierProvider
-	{
-		public string GenerateGameId() => Generate(gameIdentifierLength);
-	}
+    public string GenerateGameId() => Generate(gameIdentifierLength);
 }

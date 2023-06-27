@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface IHandIdentifierProvider
 {
-	public interface IHandIdentifierProvider
-	{
-		IEnumerable<string> GenerateHandIds(int count);
-	}
+    IEnumerable<string> GenerateHandIds(int count);
 }

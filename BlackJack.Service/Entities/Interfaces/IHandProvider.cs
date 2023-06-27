@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface IHandProvider
 {
-	public interface IHandProvider
-	{
-		IEnumerable<Hand> Hands(IEnumerable<string> identifiers);
-	}
+    IDictionary<string, Hand> Hands(IEnumerable<string> identifiers);
 }

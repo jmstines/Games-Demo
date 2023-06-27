@@ -1,10 +1,9 @@
-﻿namespace Entities.Enums
+﻿namespace Entities.Enums;
+
+public enum HandStatusTypes
 {
-	public enum HandStatusTypes
-	{
-		InProgress = 1,
-		Hold,
-		BlackJack,
-		Bust
-	}
+	InProgress = 1,
+	Hold,
+	BlackJack,
+	Bust
 }

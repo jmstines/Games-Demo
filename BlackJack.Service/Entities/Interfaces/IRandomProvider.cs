@@ -1,7 +1,6 @@
-﻿namespace Entities.Interfaces
+﻿namespace Entities.Interfaces;
+
+public interface IRandomProvider
 {
-	public interface IRandomProvider
-	{
-		int GetRandom(int min, int max);
-	}
+    int GetRandom(int min, int max);
 }

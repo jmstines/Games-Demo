@@ -1,7 +1,6 @@
-﻿namespace Interactors.Boundaries
+﻿namespace Interactors.Boundaries;
+
+public interface IOutputBoundary<TResponseModel>
 {
-	public interface IOutputBoundary<TResponseModel>
-	{
-		void HandleResponse(TResponseModel responseModel);
-	}
+	void HandleResponse(TResponseModel responseModel);
 }

@@ -1,8 +1,8 @@
 ﻿namespace Entities.ResponceDto
 {
-	public class BlackJackCardModel
+	public record BlackJackCardModel
 	{
-		public string ImageName { get; set; }
+		public string? ImageName { get; set; }
 		public int? Value { get; set; }
 	}
 }

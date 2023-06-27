@@ -1,13 +1,13 @@
 ﻿using Entities;
 using Entities.Enums;
+using System.Threading.Tasks;
 
-namespace Interactors.Repositories
+namespace Interactors.Repositories;
+
+public interface IGameRepository
 {
-	public interface IGameRepository
-	{
-		void CreateAsync(BlackJackGame game);
-		BlackJackGame ReadAsync(string identifier);
-		void UpdateAsync(string identifier, BlackJackGame game);
-		BlackJackGame FindOpenGame(GameStatus status, int maxPlayers);
-	}
+	Task CreateAsync(BlackJackGame game);
+	Task<BlackJackGame> ReadAsync(string identifier);
+	Task UpdateAsync(string identifier, BlackJackGame game);
+	Task<BlackJackGame> FindOpenGame(GameStatus status, int maxPlayers);
 }

@@ -1,60 +1,64 @@
 ﻿using Interactors.Boundaries;
 using Interactors.Repositories;
-using Entities.ResponceDto;
 using System;
 using Entities;
+using Entities.ResponceModel;
+using System.Threading.Tasks;
+using Entities.Interfaces;
 using Entities.Enums;
-using System.Linq;
 
-namespace Interactors
+namespace Interactors;
+
+public class BeginGameInteractor : IInteractorBoundary<BeginGameInteractor.RequestModel, BeginGameInteractor.ResponseModel>
 {
-	public class BeginGameInteractor : IInteractorBoundary<BeginGameInteractor.RequestModel, BeginGameInteractor.ResponseModel>
-	{
-		public class RequestModel
-		{
-			public string GameId { get; set; }
-			public string PlayerId { get; set; }
-		}
+    public record RequestModel
+    {
+        public string GameId { get; set; }
+        public string PlayerId { get; set; }
+    }
 
-		public class ResponseModel
-		{
-			public BlackJackGameModel Game { get; set; }
-		}
+    public record ResponseModel
+    {
+        public BlackJackGameModel Game { get; set; }
+    }
 
-		private readonly IGameRepository GameRepository;
+    private readonly IGameRepository GameRepository;
+    private readonly IBeginGameAction BeginGameAction;
 
-		public BeginGameInteractor(IGameRepository gameRepository)
-		{
-			GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
-		}
+    public BeginGameInteractor(IGameRepository gameRepository, IBeginGameAction beginGameAction)
+    {
+        GameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+        BeginGameAction = beginGameAction ?? throw new ArgumentNullException(nameof(beginGameAction));
+    }
 
-		public void HandleRequestAsync(RequestModel requestModel, out ResponseModel responseModel)
-		{
-			if (string.IsNullOrEmpty(requestModel.PlayerId))
-			{
-				throw new ArgumentNullException(nameof(requestModel.PlayerId));
-			}
+    public async Task HandleRequestAsync(RequestModel requestModel, ResponseModel responseModel)
+    {
+        var game = await GameRepository.ReadAsync(requestModel.GameId);
 
-			if (string.IsNullOrEmpty(requestModel.GameId))
-			{
-				throw new ArgumentNullException(nameof(requestModel.GameId));
-			}
+        if (game == null)
+        {
+            return;
+        }
 
-			var game = GameRepository.ReadAsync(requestModel.GameId);
+        if (game.Players.TryGetValue(requestModel.PlayerId, out var player) == false)
+        {
+            throw new ArgumentException($"Player with id {requestModel.PlayerId} not found.");
+        }
 
-			game.Players.Single(x => x.Identifier == requestModel.PlayerId).Status = PlayerStatusTypes.Ready;
+        if (game?.Status != GameStatus.Ready)
+        {
+            throw new ArgumentOutOfRangeException(nameof(game.Status), "Game Status Must be Ready to Deal Hands.");
+        }
 
-			//TODO: Should Check current player before dealing.
-			//TODO: Should Check all players ready.
+        BeginGameAction.PlayerBegins(game, player);
 
-			game.Deal();
-			game.Status = GameStatus.InProgress;
+        //TODO: Should Check current player before dealing.
+        //TODO: Should Check all players ready.
 
-			GameRepository.UpdateAsync(game.Id, game);
+        await GameRepository.UpdateAsync(game.Id, game);
 
-			var gameModel = game.ToModel(game.CurrentPlayer.Identifier);
+        var gameModel = game.ToModel(game.CurrentPlayer);
 
-			responseModel = new ResponseModel() { Game = gameModel };
-		}
-	}
+        responseModel = new ResponseModel() { Game = gameModel };
+    }
 }

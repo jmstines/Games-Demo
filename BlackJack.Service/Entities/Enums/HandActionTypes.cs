@@ -1,9 +1,8 @@
-﻿namespace Entities.Enums
+﻿namespace Entities.Enums;
+
+public enum HandActionTypes
 {
-	public enum HandActionTypes
-	{
-		Hold = 1,
-		Hit,
-		Split
-	}
+	Hold = 1,
+	Hit,
+	Split
 }

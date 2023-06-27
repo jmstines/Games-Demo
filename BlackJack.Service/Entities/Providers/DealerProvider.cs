@@ -1,52 +1,59 @@
 ﻿using Entities.Interfaces;
-using Entities.RepositoryDto;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Entities.Providers
 {
-	public class DealerProvider : IDealerProvider
+    public class DealerProvider : IDealerProvider
 	{
 		private readonly IAvitarIdentifierProvider AvitarIdentifierProvider;
-		private readonly IEnumerable<BlackJackPlayer> Dealers;
-		private readonly IHandIdentifierProvider HandIdentifierProvider;
+		private readonly IDictionary<string, IBlackJackPlayer> Dealers;
 
-		public BlackJackPlayer Dealer => RandomDealer();
+		public KeyValuePair<string, IBlackJackPlayer> Dealer => RandomDealer();
 
-		public DealerProvider(IAvitarIdentifierProvider avitarIdentifier, IHandIdentifierProvider handIdentifierProvider)
+		public DealerProvider(IAvitarIdentifierProvider avitarIdentifier)
 		{
 			AvitarIdentifierProvider = avitarIdentifier ?? throw new ArgumentNullException(nameof(avitarIdentifier));
-			HandIdentifierProvider = handIdentifierProvider ?? throw new ArgumentNullException(nameof(handIdentifierProvider));
 			Dealers = DealersList();
 		}
 
-		private BlackJackPlayer RandomDealer()
+		private KeyValuePair<string, IBlackJackPlayer> RandomDealer()
 		{
 			var Random = new Random((int)DateTime.UtcNow.Ticks);
-			var index = Random.Next(minValue: 0, maxValue: Dealers.Count());
+			var index = Random.Next(minValue: 0, maxValue: Dealers.Count);
 			return Dealers.ElementAt(index);
 		}
 
-		private IEnumerable<BlackJackPlayer> DealersList()
+		private IDictionary<string, IBlackJackPlayer> DealersList()
 		{
-			var ids = new List<string> { 
-				AvitarIdentifierProvider.GenerateAvitar(),
-				AvitarIdentifierProvider.GenerateAvitar(), 
-				AvitarIdentifierProvider.GenerateAvitar(), 
-				AvitarIdentifierProvider.GenerateAvitar()
-			};
-
-			var dealers = new List<BlackJackPlayer>
+			var dealers = new Dictionary<string, IBlackJackPlayer>
 			{
-				new BlackJackPlayer(new AvitarDto() {
-					Id = ids[0], UserName = "Data" }, HandIdentifierProvider, 1),
-				new BlackJackPlayer(new AvitarDto() {
-					Id = ids[1], UserName = "Jerry Maguire" }, HandIdentifierProvider, 1),
-				new BlackJackPlayer(new AvitarDto() {
-					Id = ids[2], UserName = "James Bond" }, HandIdentifierProvider, 1),
-				new BlackJackPlayer(new AvitarDto() {
-					Id = ids[3], UserName = "Rain Man" }, HandIdentifierProvider, 1)
+				{
+					AvitarIdentifierProvider.GenerateAvitar(),
+					new BlackJackPlayer() {
+						Name = "Data"
+					}
+				},
+				{
+					AvitarIdentifierProvider.GenerateAvitar(),
+					new BlackJackPlayer()
+					{
+						Name = "Jerry Maguire"
+					}
+				},
+				{
+					AvitarIdentifierProvider.GenerateAvitar(),
+					new BlackJackPlayer() {
+						Name = "James Bond"
+					}
+				},
+				{
+					AvitarIdentifierProvider.GenerateAvitar(),
+					new BlackJackPlayer() {
+						Name = "Rain Man" 
+					}
+				}
 			};
 
 			return dealers;

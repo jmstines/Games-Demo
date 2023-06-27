@@ -1,10 +1,8 @@
-﻿using Entities.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Entities.Interfaces
+namespace Entities.Interfaces;
+
+public interface ICardProvider
 {
-	public interface ICardProvider
-	{
-		IEnumerable<ICard> Cards(int count);
-	}
+    IEnumerable<ICard> Cards(int count);
 }

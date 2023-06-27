@@ -1,7 +1,6 @@
-﻿namespace Entities.Interfaces
-{
-	public interface IGuidBasedIdentifierProviders : IPlayerIdentifierProvider, IHandIdentifierProvider, IAvitarIdentifierProvider, IGameIdentifierProvider
-	{
+﻿namespace Entities.Interfaces;
 
-	}
+public interface IGuidBasedIdentifierProviders : IPlayerIdentifierProvider, IHandIdentifierProvider, IAvitarIdentifierProvider, IGameIdentifierProvider
+{
+
 }
