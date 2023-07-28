@@ -1,8 +1,8 @@
-import { Actions } from "@/model/Actions";
-import { IPlayer } from "@/model/IPlayer";
+import { Actions } from "./Actions";
+import { IPlayer } from "./IPlayer";
 import { ICard } from "./ICard";
-import { GameStatus } from "@/model/GameStatus";
-import { IHand } from "@/model/IHand";
+import { GameStatus } from "./GameStatus";
+import { IHand } from "./IHand";
 import { IGame } from "./IGame";
 
 export { Actions, GameStatus };   

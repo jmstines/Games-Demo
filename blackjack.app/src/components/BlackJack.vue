@@ -30,7 +30,6 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
 import Player from "@/components/Player.vue";
 import type { IGame } from "@/model/index";
 import { Actions, GameStatus } from "../model/";
@@ -44,7 +43,7 @@ interface IData {
 
 const api = new BlackJackApi();
 
-export default Vue.extend({
+export default {
   name: "BlackJack",
   components: {
     Player
@@ -102,5 +101,5 @@ export default Vue.extend({
       }
     }
   }
-});
+};
 </script>

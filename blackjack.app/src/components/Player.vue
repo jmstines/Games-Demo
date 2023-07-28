@@ -9,7 +9,7 @@
         <v-btn
           v-for="(action, index) in hand.actions"
           :key="index"
-          v-on:click="$emit('action', action, handId, playerId)"
+          v-on:click="$emit('action', action, hand.identifier, player.id)"
         >
           {{ getAction(action) }}
         </v-btn>
